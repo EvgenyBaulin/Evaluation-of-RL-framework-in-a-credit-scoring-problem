@@ -1,0 +1,19 @@
+\babel@toc {english}{}\relax 
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Controlled Experimental Design}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Fixed Components}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Varying Component}{2}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Observation Layers}{3}{section.3}%
+\contentsline {section}{\numberline {4}Experimental Protocol}{3}{section.4}%
+\contentsline {section}{\numberline {5}Results}{4}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Best Overall Controller by Dimension}{4}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Best RL Controller by Dimension}{4}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Cross-Dimension Figures}{5}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Per-Dimension Scenario Plots}{6}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Discussion}{7}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Saturation}{7}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Signal versus Complexity}{7}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Stability and Threshold Behavior}{7}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Validity Checks}{7}{section.7}%
+\contentsline {section}{\numberline {8}Conclusion}{8}{section.8}%

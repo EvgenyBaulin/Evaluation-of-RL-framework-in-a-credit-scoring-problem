@@ -1,0 +1,10 @@
+controller,scenario_name,early_gap,final_gap,locally_worse_globally_better
+dqn,adverse_stress,-1185.3688936832573,235141.847770376,True
+double_dqn,adverse_stress,-3162.9771053742866,26807.00111320408,True
+ppo,adverse_stress,-2010.073159205585,114364.76365804122,True
+sac,adverse_stress,-2592.994354599515,-4082.1813494673697,False
+sac,base_market,-535.6474882588855,-12410.972805586029,False
+sac,class_imbalance_shift,377.7828661409385,-39974.46630318572,False
+sac,drift,-1342.777021503256,-45831.67704772651,False
+sac,noise,-3329.027697099068,-49458.031984746995,False
+sac,split_policy_dynamics,-2969.050412581896,-59253.48870268959,False

@@ -1,0 +1,5 @@
+controller,scenario_name,early_gap,final_gap,locally_worse_globally_better
+dqn,adverse_stress,-3832.403846642296,53409.48815437578,True
+double_dqn,adverse_stress,-526.0326676306399,209167.86290105846,True
+ppo,adverse_stress,-2010.073159205585,114364.76365804122,True
+sac,adverse_stress,-2128.132005446914,97969.41647265508,True

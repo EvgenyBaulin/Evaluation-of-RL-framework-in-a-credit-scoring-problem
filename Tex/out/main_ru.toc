@@ -1,0 +1,53 @@
+\babel@toc {english}{}\relax 
+\babel@toc {russian}{}\relax 
+\contentsline {section}{\numberline {1}Введение}{3}{section.1}%
+\contentsline {section}{\numberline {2}Что именно изучается и почему это важно}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Почему исследуется именно недельное управление порогами}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Почему отложенные исходы здесь принципиальны}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Почему важно разделение на новых и повторных клиентов}{5}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Граница между reference-проектом и текущей реализацией}{5}{section.3}%
+\contentsline {section}{\numberline {4}Как устроен симулятор}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Временная структура эпизода}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Что происходит внутри одной недели}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Уточнение по метрике \texttt {expected\_profit}}{7}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Сценарии и их исследовательский смысл}{7}{section.5}%
+\contentsline {section}{\numberline {6}Контролируемый эксперимент по размерности состояния}{8}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Что зафиксировано}{8}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Что меняется}{8}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Как устроены слои состояния}{9}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Почему дополнительные признаки вообще могут помочь}{9}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Контроллеры}{9}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Базовые политики}{9}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}RL-алгоритмы}{10}{subsection.7.2}%
+\contentsline {section}{\numberline {8}Функция награды и смысл метрик}{10}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Как устроена награда}{10}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Почему ``лучшая по прибыли'' и ``лучшая по reward'' политика могут не совпадать}{11}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Какие метрики используются}{11}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Экспериментальный протокол}{11}{section.9}%
+\contentsline {section}{\numberline {10}Основные результаты}{12}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Лучший overall-контроллер}{12}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Лучший RL-контроллер}{13}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Разные RL-алгоритмы реагируют на размерность по-разному}{13}{subsection.10.3}%
+\contentsline {section}{\numberline {11}Кросс-размерные графики и что они показывают}{15}{section.11}%
+\contentsline {section}{\numberline {12}Сценарная интерпретация результатов}{17}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Почему одной общей таблицы недостаточно}{17}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Смысловая карта сценариев в 50D}{18}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Adverse stress}{18}{subsection.12.3}%
+\contentsline {subsection}{\numberline {12.4}Base market}{18}{subsection.12.4}%
+\contentsline {subsection}{\numberline {12.5}Class-imbalance shift}{19}{subsection.12.5}%
+\contentsline {subsection}{\numberline {12.6}Drift}{19}{subsection.12.6}%
+\contentsline {subsection}{\numberline {12.7}Noise}{19}{subsection.12.7}%
+\contentsline {subsection}{\numberline {12.8}Split-policy dynamics}{19}{subsection.12.8}%
+\contentsline {section}{\numberline {13}Что показывают отдельные рисунки по размерностям}{20}{section.13}%
+\contentsline {section}{\numberline {14}Поведение порогов и важная интерпретационная деталь}{21}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Почему нулевая threshold volatility не означает полное отсутствие различий}{21}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}Какие пороговые пары выбирают лучшие RL-контроллеры}{21}{subsection.14.2}%
+\contentsline {subsection}{\numberline {14.3}Почему это все равно важный результат}{21}{subsection.14.3}%
+\contentsline {section}{\numberline {15}Обсуждение}{22}{section.15}%
+\contentsline {subsection}{\numberline {15.1}Почему 30D выглядит наиболее сбалансированной размерностью}{22}{subsection.15.1}%
+\contentsline {subsection}{\numberline {15.2}Почему 50D выглядит как saturation, а не как новый скачок}{22}{subsection.15.2}%
+\contentsline {subsection}{\numberline {15.3}Почему baseline по-прежнему выигрывает overall}{22}{subsection.15.3}%
+\contentsline {subsection}{\numberline {15.4}Практический смысл trade-offs}{22}{subsection.15.4}%
+\contentsline {section}{\numberline {16}Ограничения исследования}{23}{section.16}%
+\contentsline {section}{\numberline {17}Научная новизна и вклад}{23}{section.17}%
+\contentsline {section}{\numberline {18}Заключение}{24}{section.18}%

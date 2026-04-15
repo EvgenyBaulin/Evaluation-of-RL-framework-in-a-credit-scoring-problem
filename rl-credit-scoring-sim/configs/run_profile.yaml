@@ -1,0 +1,192 @@
+# Active profile used when --profile is not supplied.
+active_profile: quick
+
+# Shared settings applied to every profile.
+shared:
+  state_dim: 12
+
+  paths:
+    artifacts_root: artifacts
+    figures_dir: artifacts/figures
+    tables_dir: artifacts/tables
+    logs_dir: artifacts/logs
+    checkpoints_dir: artifacts/checkpoints
+    writer_handoff: notes/writer_handoff.md
+    reference_summary: notes/reference_study.md
+
+  execution:
+    run_training: true
+    run_evaluation: true
+    run_ablation: true
+    run_plotting: true
+    export_tables: true
+    export_writer_handoff: true
+
+  policy:
+    split_policy: true
+    threshold_min: 35
+    threshold_max: 85
+    threshold_granularity: 5
+    threshold_grid_size: 11
+    default_threshold_new: 60
+    default_threshold_repeat: 50
+
+  environment:
+    warmup_weeks: 8
+    horizon_weeks: 26
+    applications_per_week: 320
+    capital_limit: 3000000.0
+    annual_discount_rate: 0.14
+    reward_window: 4
+    terminal_settlement: true
+    delayed_reward: true
+    risk_aware_shaping: true
+    scenario_randomization: true
+    train_scale: 0.80
+    validation_scale: 0.90
+    test_scale: 1.00
+    test_subset_fraction: 0.75
+
+  reward:
+    profit_weight: 1.0
+    npv_weight: 0.25
+    risk_shaping_weight: 0.35
+    penalties:
+      default_rate:
+        enabled: true
+        weight: 9.0
+        target: 0.12
+      approval_rate:
+        enabled: true
+        weight: 2.0
+        target: 0.42
+      capital_usage:
+        enabled: true
+        weight: 3.5
+        target: 0.82
+      volatility:
+        enabled: true
+        weight: 1.4
+        target: 8500.0
+
+  scenarios:
+    # Training scenarios are sampled during RL training when scenario_randomization=true.
+    training_scenarios:
+      - base_market
+      - drift
+      - adverse_stress
+      - class_imbalance_shift
+      - noise
+      - split_policy_dynamics
+    evaluation_scenarios:
+      - base_market
+      - drift
+      - adverse_stress
+      - class_imbalance_shift
+      - noise
+      - split_policy_dynamics
+
+  controllers:
+    agents:
+      - dqn
+      - double_dqn
+      - ppo
+      - sac
+    baselines:
+      - static_threshold
+      - profit_oriented
+      - risk_aware_weekly
+      - constraint_aware_weekly
+      - split_policy_static
+    ablation_primary_agent: ppo
+
+  logging:
+    logging_frequency_episodes: 1
+    checkpoint_frequency_episodes: 4
+
+  confidence_intervals:
+    method: bootstrap
+    confidence_level: 0.95
+    full_ci: true
+    bootstrap_resamples: 500
+    fast_bootstrap_resamples: 120
+
+  agents:
+    dqn:
+      hidden_sizes: [128, 128]
+      learning_rate: 0.001
+      gamma: 0.98
+      batch_size: 64
+      replay_size: 20000
+      learning_starts: 300
+      train_frequency: 1
+      gradient_steps: 1
+      target_update_interval: 200
+      epsilon_start: 1.0
+      epsilon_end: 0.05
+      epsilon_decay_fraction: 0.65
+    double_dqn:
+      hidden_sizes: [128, 128]
+      learning_rate: 0.001
+      gamma: 0.98
+      batch_size: 64
+      replay_size: 20000
+      learning_starts: 300
+      train_frequency: 1
+      gradient_steps: 1
+      target_update_interval: 200
+      epsilon_start: 1.0
+      epsilon_end: 0.05
+      epsilon_decay_fraction: 0.65
+    ppo:
+      policy_kwargs:
+        net_arch: [128, 128]
+      learning_rate: 0.0003
+      n_steps: 256
+      batch_size: 64
+      gamma: 0.98
+      gae_lambda: 0.95
+      ent_coef: 0.01
+      clip_range: 0.20
+    sac:
+      policy_kwargs:
+        net_arch: [128, 128]
+      learning_rate: 0.0003
+      buffer_size: 50000
+      learning_starts: 500
+      batch_size: 128
+      gamma: 0.98
+      tau: 0.02
+      train_freq: 1
+      gradient_steps: 1
+
+profiles:
+  # Safe default for smoke tests and first end-to-end verification.
+  quick:
+    mode: quick
+    seeds: [11, 23, 37]
+    quick_test_seed_count: 3
+    final_comparison_seed_count: 3
+    training_episodes: 12
+    evaluation_runs: 4
+    horizon_weeks: 26
+    applications_per_week: 260
+    test_subset_fraction: 0.65
+    build_minimal_plots_only: false
+    full_ci: false
+    bootstrap_resamples: 150
+
+  # Scaled-up configuration for the thesis-quality run.
+  full:
+    mode: full
+    seeds: [11, 23, 37, 51, 67, 79, 97, 113]
+    quick_test_seed_count: 3
+    final_comparison_seed_count: 8
+    training_episodes: 50
+    evaluation_runs: 12
+    horizon_weeks: 52
+    applications_per_week: 600
+    test_subset_fraction: 1.00
+    build_minimal_plots_only: false
+    full_ci: true
+    bootstrap_resamples: 1000

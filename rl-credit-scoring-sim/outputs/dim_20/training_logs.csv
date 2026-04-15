@@ -1,0 +1,85 @@
+agent_name,seed,episode,cumulative_reward,scenario_name,expected_profit,default_rate,approval_rate,log_type,metadata
+dqn,11,validation,-139924.20823806783,base_market,-80376.28351734442,0.1678577973245373,0.9024309574995866,validation,
+dqn,11,0,-153339.96298637247,drift,,,,,{'total_steps': 26}
+dqn,11,1,-280692.7416158052,adverse_stress,,,,,{'total_steps': 52}
+dqn,11,2,-69467.53759072303,class_imbalance_shift,,,,,{'total_steps': 78}
+dqn,11,3,-35129.04502225919,noise,,,,,{'total_steps': 104}
+dqn,11,4,-153480.17372630935,split_policy_dynamics,,,,,{'total_steps': 130}
+dqn,11,5,15216.491320388479,base_market,,,,,{'total_steps': 156}
+dqn,11,6,-7735.678208042584,drift,,,,,{'total_steps': 182}
+dqn,11,7,-195944.04785889908,adverse_stress,,,,,{'total_steps': 208}
+dqn,11,8,-144933.92481452064,class_imbalance_shift,,,,,{'total_steps': 234}
+dqn,11,9,108352.99610404445,noise,,,,,{'total_steps': 260}
+dqn,11,10,-142998.94345549998,split_policy_dynamics,,,,,{'total_steps': 286}
+dqn,11,11,-36898.384237189486,base_market,,,,,{'total_steps': 312}
+double_dqn,11,validation,117123.34399654393,base_market,101099.81549909018,0.1282433641515061,0.5544898296676037,validation,
+double_dqn,11,0,-145931.9340451341,drift,,,,,{'total_steps': 26}
+double_dqn,11,1,-365802.86790994834,adverse_stress,,,,,{'total_steps': 52}
+double_dqn,11,2,-192520.18131168865,class_imbalance_shift,,,,,{'total_steps': 78}
+double_dqn,11,3,-38718.524716038315,noise,,,,,{'total_steps': 104}
+double_dqn,11,4,-90507.34097432462,split_policy_dynamics,,,,,{'total_steps': 130}
+double_dqn,11,5,-32554.525996160985,base_market,,,,,{'total_steps': 156}
+double_dqn,11,6,-43919.62992803474,drift,,,,,{'total_steps': 182}
+double_dqn,11,7,-214333.69794687023,adverse_stress,,,,,{'total_steps': 208}
+double_dqn,11,8,42324.783764067695,class_imbalance_shift,,,,,{'total_steps': 234}
+double_dqn,11,9,172198.6964074201,noise,,,,,{'total_steps': 260}
+double_dqn,11,10,46272.172653520705,split_policy_dynamics,,,,,{'total_steps': 286}
+double_dqn,11,11,100806.11536347707,base_market,,,,,{'total_steps': 312}
+ppo,11,validation,30254.898287520115,base_market,32855.52576996214,0.1465983489894677,0.580949231023648,validation,
+sac,11,validation,175927.45045408583,base_market,144130.76022630808,0.10372340425531915,0.3730775591202249,validation,
+dqn,23,validation,166429.97780857846,base_market,138968.14279102418,0.12725546058879392,0.5267633816908455,validation,
+dqn,23,0,-82993.72166350883,drift,,,,,{'total_steps': 26}
+dqn,23,1,-287159.4783278119,adverse_stress,,,,,{'total_steps': 52}
+dqn,23,2,-163381.70688367897,class_imbalance_shift,,,,,{'total_steps': 78}
+dqn,23,3,138259.20884861372,noise,,,,,{'total_steps': 104}
+dqn,23,4,73493.91164105038,split_policy_dynamics,,,,,{'total_steps': 130}
+dqn,23,5,117260.1904186042,base_market,,,,,{'total_steps': 156}
+dqn,23,6,38639.33644936816,drift,,,,,{'total_steps': 182}
+dqn,23,7,-263347.9329744725,adverse_stress,,,,,{'total_steps': 208}
+dqn,23,8,43824.05669023977,class_imbalance_shift,,,,,{'total_steps': 234}
+dqn,23,9,116280.59251343989,noise,,,,,{'total_steps': 260}
+dqn,23,10,-37691.034814789215,split_policy_dynamics,,,,,{'total_steps': 286}
+dqn,23,11,122736.58803329038,base_market,,,,,{'total_steps': 312}
+double_dqn,23,validation,166422.0415224193,base_market,136690.12677281004,0.10220346929207688,0.35567783891945975,validation,
+double_dqn,23,0,-99447.56023651984,drift,,,,,{'total_steps': 26}
+double_dqn,23,1,-388124.16206711065,adverse_stress,,,,,{'total_steps': 52}
+double_dqn,23,2,-229270.43474650892,class_imbalance_shift,,,,,{'total_steps': 78}
+double_dqn,23,3,137018.9881018775,noise,,,,,{'total_steps': 104}
+double_dqn,23,4,-54410.81295622248,split_policy_dynamics,,,,,{'total_steps': 130}
+double_dqn,23,5,90918.30797358243,base_market,,,,,{'total_steps': 156}
+double_dqn,23,6,-86254.72607143901,drift,,,,,{'total_steps': 182}
+double_dqn,23,7,-269362.19680944766,adverse_stress,,,,,{'total_steps': 208}
+double_dqn,23,8,73481.16563377486,class_imbalance_shift,,,,,{'total_steps': 234}
+double_dqn,23,9,143683.534151895,noise,,,,,{'total_steps': 260}
+double_dqn,23,10,146840.63513972113,split_policy_dynamics,,,,,{'total_steps': 286}
+double_dqn,23,11,152237.99657401367,base_market,,,,,{'total_steps': 312}
+ppo,23,validation,117743.48551573722,base_market,102023.23420777298,0.1418665125686218,0.5771218942804736,validation,
+sac,23,validation,161653.4079486606,base_market,132266.4658622395,0.10749891634156913,0.38469234617308656,validation,
+dqn,37,validation,148903.7365828554,base_market,128356.4450130836,0.13345302214242968,0.548768472906404,validation,
+dqn,37,0,-136966.1165144027,drift,,,,,{'total_steps': 26}
+dqn,37,1,-373770.55319447874,adverse_stress,,,,,{'total_steps': 52}
+dqn,37,2,-26110.119059303062,class_imbalance_shift,,,,,{'total_steps': 78}
+dqn,37,3,65017.36805274198,noise,,,,,{'total_steps': 104}
+dqn,37,4,112567.3617229547,split_policy_dynamics,,,,,{'total_steps': 130}
+dqn,37,5,1218.6253563143546,base_market,,,,,{'total_steps': 156}
+dqn,37,6,-40184.7410322293,drift,,,,,{'total_steps': 182}
+dqn,37,7,-134673.10438909126,adverse_stress,,,,,{'total_steps': 208}
+dqn,37,8,9257.879392829458,class_imbalance_shift,,,,,{'total_steps': 234}
+dqn,37,9,141746.2868513511,noise,,,,,{'total_steps': 260}
+dqn,37,10,31680.353174377917,split_policy_dynamics,,,,,{'total_steps': 286}
+dqn,37,11,46824.57909293714,base_market,,,,,{'total_steps': 312}
+double_dqn,37,validation,203780.74658278888,base_market,167530.6256275547,0.10887906789875453,0.40870279146141214,validation,
+double_dqn,37,0,-157010.41094444838,drift,,,,,{'total_steps': 26}
+double_dqn,37,1,-449833.340892451,adverse_stress,,,,,{'total_steps': 52}
+double_dqn,37,2,-53652.3242880685,class_imbalance_shift,,,,,{'total_steps': 78}
+double_dqn,37,3,37261.411434351285,noise,,,,,{'total_steps': 104}
+double_dqn,37,4,-64965.21630811591,split_policy_dynamics,,,,,{'total_steps': 130}
+double_dqn,37,5,13946.862933880493,base_market,,,,,{'total_steps': 156}
+double_dqn,37,6,-64624.100207128766,drift,,,,,{'total_steps': 182}
+double_dqn,37,7,-254268.3799615485,adverse_stress,,,,,{'total_steps': 208}
+double_dqn,37,8,7850.467280987068,class_imbalance_shift,,,,,{'total_steps': 234}
+double_dqn,37,9,194536.34766027192,noise,,,,,{'total_steps': 260}
+double_dqn,37,10,201863.66043723244,split_policy_dynamics,,,,,{'total_steps': 286}
+double_dqn,37,11,93308.78343109795,base_market,,,,,{'total_steps': 312}
+ppo,37,validation,120276.59441271423,base_market,107107.31753067684,0.14046538024971622,0.5786535303776683,validation,
+sac,37,validation,-243453.80239763687,base_market,-181849.40791175218,0.19878757261934832,0.6500821018062397,validation,
