@@ -23,7 +23,7 @@
 
 - Explicit split-policy control for new and repeat clients throughout the main setup.
 - A modern config-driven experiment runner with quick and full profiles.
-- A controlled state-dimensionality experiment comparing 12D, 20D, 30D, and 50D observations while holding the rest of the protocol fixed.
+- A controlled state-dimensionality experiment that compares 12D, 20D, 30D, and 50D observations while holding the rest of the protocol fixed.
 - Constraint-aware reward shaping with default-rate, approval-rate, capital-usage, and volatility penalties.
 - Multi-agent comparison across DQN, Double-DQN, PPO, and SAC.
 - Unified bootstrap confidence intervals for tables and time-series curves.

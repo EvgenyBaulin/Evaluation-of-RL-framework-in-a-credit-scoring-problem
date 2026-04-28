@@ -12,7 +12,8 @@ from rl_credit_scoring_sim.evaluation.dimensionality import run_dimensionality_e
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Run the controlled state-dimensionality experiment.")
+    parser = argparse.ArgumentParser(
+        description="Run the controlled state-dimensionality experiment.")
     parser.add_argument(
         "--profile",
         type=str,
@@ -20,4 +21,5 @@ if __name__ == "__main__":
         help="Profile name from configs/run_profile.yaml. Defaults to active_profile.",
     )
     args = parser.parse_args()
-    run_dimensionality_experiment(project_root=PROJECT_ROOT, profile=args.profile)
+    run_dimensionality_experiment(
+        project_root=PROJECT_ROOT, profile=args.profile)

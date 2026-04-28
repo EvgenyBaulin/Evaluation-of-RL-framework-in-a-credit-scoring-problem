@@ -1,0 +1,11 @@
+hypothesis,comparison,scenario_name,metric,left,right,n_pairs,mean_left_minus_right,bootstrap_ci_low,bootstrap_ci_high,paired_t_p_value,wilcoxon_p_value
+H1,30D DQN vs 12D DQN,all,cumulative_reward,dqn_30D,dqn_12D,72,10911.330803467505,3486.20331975786,19187.33527298794,0.008317347108677178,0.00723749486912432
+H1,30D DQN vs 20D Double-DQN best-RL frontier,all,cumulative_reward,dqn_30D,double_dqn_20D,72,8407.671480997979,-1090.647268051607,18743.523024408463,0.10694090895272393,0.4487032831276814
+H1,30D DQN vs 50D DQN,all,cumulative_reward,dqn_30D,dqn_50D,72,21.297916521317447,-4838.629834280701,5057.5462413013565,0.9933487094069449,0.3690202854241177
+H1,30D DQN vs 20D Double-DQN best-RL frontier,all,default_rate,dqn_30D,double_dqn_20D,72,-0.007471408802939357,-0.011117632807725828,-0.004022350364263496,0.00011174322291532108,0.00042485407978417564
+H2,30D best RL vs best overall baseline,all,cumulative_reward,dqn_30D,profit_oriented_30D,72,-9860.905009615668,-20135.76817416536,600.1519376961833,0.06585055294242094,0.05495913233093146
+H2,50D best RL vs best overall baseline,all,cumulative_reward,dqn_50D,profit_oriented_50D,72,-9882.202926136986,-21444.468530849972,1832.1358262711813,0.10071000137465165,0.10012948882899342
+H2,50D DQN vs profit-oriented baseline in base market,base_market,cumulative_reward,dqn_50D,profit_oriented_50D,12,11430.02089669559,-14433.59679746474,39468.78240005696,0.44560616987849533,0.7333984375
+H2,30D DQN default rate vs profit-oriented baseline,all,default_rate,dqn_30D,profit_oriented_30D,72,0.0015749355131945944,-0.0021141900455316125,0.0053030704756170405,0.4037999215870395,0.6174689386100163
+H3,"30D DQN vs static threshold, adverse stress, early horizon",adverse_stress,cumulative_profit_week_6,dqn_30D,static_threshold_30D,12,-643.460152231467,-4156.752864796326,3358.9889367252035,0.755033308144661,0.4697265625
+H3,"30D DQN vs static threshold, adverse stress, final horizon",adverse_stress,cumulative_profit_week_25,dqn_30D,static_threshold_30D,12,250578.19929289978,223505.17660351854,276331.3371744216,1.7871209751328121e-09,0.00048828125
