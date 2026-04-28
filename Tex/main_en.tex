@@ -19,7 +19,7 @@
 \graphicspath{{../rl-credit-scoring-sim/outputs/}}
 \setstretch{1.08}
 
-\title{Controlled State-Dimensionality Study\\for Weekly Threshold Control in Credit Scoring}
+\title{Evaluation of a Reinforcement Learning Framework\\in a Credit Scoring Problem}
 \author{}
 \date{}
 
@@ -32,22 +32,31 @@
 
 \section{Introduction}
 
-This report describes the current state of the repository after it was re-centered around a controlled state-dimensionality experiment for weekly threshold control in credit scoring. The project is not a generic benchmark on public tabular datasets and it is not a pointwise approval classifier. Its object of control is a portfolio policy. Each week the controller selects score cutoffs for new and repeat applicants, the simulator accepts all applications above those cutoffs, and the resulting cohort produces repayments, defaults, and late recoveries over future weeks. Because the timing of cash flows is delayed, portfolio quality cannot be evaluated from the current cohort alone. A policy that looks attractive on a one-week horizon can still produce a weaker end-of-episode portfolio once defaults and capital pressure materialize.
+This thesis evaluates a reinforcement learning framework for credit-scoring threshold optimization. The study is not a pointwise classification benchmark in which each loan application is independently approved or rejected. Its decision object is a weekly portfolio policy. In each week $t$, the controller chooses two acceptance thresholds: $\tau^{new}_t$ for new customers and $\tau^{repeat}_t$ for repeat customers. Applications above the corresponding threshold are accepted, and the resulting portfolio then generates repayments, defaults, recoveries, capital usage, and realized cash flows over later weeks.
 
-This distinction is the main reason the repository remains relevant as a research artifact. In real consumer lending, threshold design is often revised at a batch level rather than on every individual file. The operational question is therefore not only ``which applications are good today,'' but also ``which weekly score frontier keeps the portfolio profitable, solvent, and stable over time.'' The present simulator makes that temporal trade-off explicit. It models weekly application inflow, segment heterogeneity, delayed loss realization, partial recoveries, portfolio-level capital usage, and a reward function that combines profitability with risk and operational constraints.
+The goal of this thesis is to evaluate the robustness of a reinforcement learning framework for credit-scoring threshold optimization under different state representations, market scenarios, and portfolio constraints. The central research question is:
+\begin{quote}
+    \emph{Under which conditions does reinforcement learning provide a robust improvement over rule-based threshold policies in a delayed-outcome credit-scoring environment?}
+\end{quote}
 
-The current repository focus is narrower and more controlled than the broader framework from which the project evolved. The central research question is now: \emph{how much does observation design matter when everything else in the threshold-control problem is held fixed?} To answer this, the implementation compares four observation sizes, namely 12, 20, 30, and 50 features, while keeping environment dynamics, reward design, warm-up logic, terminal settlement, seeds, scenarios, baselines, RL algorithms, and the train/evaluation protocol unchanged.
+The thesis deliberately avoids the claim that a completely new reinforcement learning algorithm is introduced. The research contribution is an experimental and methodological extension of an existing threshold-control idea. The original idea is developed into a richer framework with split weekly thresholds, delayed outcome modelling, terminal settlement, multi-scenario simulation, several observation spaces, strong rule-based baselines, and statistical hypothesis checks.
 
-That controlled setup matters for interpretation. It allows the dimensionality result to be attributed to the information content and complexity of the state vector rather than to hidden changes in reward shaping, scenario difficulty, or comparison controllers. The main exported conclusion is not that reinforcement learning automatically dominates rule-based policies. In fact, the strongest overall controller in the quick-profile outputs remains a non-RL baseline. The more precise conclusion is that state design materially changes RL quality, that richer portfolio state helps up to a point, and that the gain is strongly algorithm-dependent.
+To answer the research question, the thesis addresses the following tasks:
+\begin{enumerate}[leftmargin=*]
+    \item formulate credit-scoring threshold optimization as a sequential portfolio decision problem;
+    \item adapt a simulation framework in which accepted loans create delayed repayments, defaults, recoveries, and realized rewards;
+    \item implement split threshold policies for new and repeat customers;
+    \item define reinforcement learning controllers and economically meaningful rule-based baselines;
+    \item formulate testable hypotheses based on the literature motivation and the research intuition of delayed portfolio control;
+    \item evaluate 12D, 20D, 30D, and 50D state representations under a controlled protocol;
+    \item compare algorithms across cumulative reward, realized profit, realized NPV, default rate, approval rate, capital usage, reward volatility, and threshold volatility;
+    \item conduct paired statistical comparisons and bootstrap confidence intervals where the exported data allow;
+    \item interpret the robustness and limitations of reinforcement learning rather than only reporting the single best model.
+\end{enumerate}
 
-The updated repository supports a richer thesis-style narrative than the previous compact note. The main contributions evidenced by the current code and outputs are the following.
-\begin{itemize}[leftmargin=*]
-    \item The simulator implements weekly portfolio control with delayed credit outcomes, delayed rewards, terminal settlement, and separate thresholds for new and repeat clients.
-    \item The dimensionality experiment changes only \texttt{state\_dim}, which makes the 12D--20D--30D--50D comparison a controlled methodological study rather than a loose sequence of experiments.
-    \item The exported tables show that the best RL frontier improves from 12D to 30D and then largely saturates from 30D to 50D.
-    \item The same exports also show that additional dimensionality does not help all algorithms equally: DQN improves substantially, Double-DQN peaks earlier and collapses at 50D, PPO is effectively unchanged, and SAC remains unstable.
-    \item Weekly reward maximization and raw profit maximization are not identical objectives in this repository. The results therefore reveal trade-offs among profitability, default rate, approval rate, capital usage, and volatility rather than a single scalar ranking only.
-\end{itemize}
+The expected contribution is fourfold. Methodologically, the thesis frames credit-scoring cutoff management as delayed weekly threshold control instead of static threshold selection. Experimentally, it compares state dimensionalities, algorithms, baselines, and market scenarios under a fixed protocol. Empirically, it shows where reinforcement learning is useful, where it remains weaker than strong rules, and why the 30D state is the most balanced representation in the current experiments. Practically, the results clarify that dynamic threshold optimization should be evaluated as a robustness problem under portfolio constraints, not only as a leaderboard problem.
+
+The main conclusion anticipated by this structure is nuanced. Reinforcement learning is not treated as universally superior. Strong rule-based baselines remain competitive, and the best overall controller in the exported quick-profile results is still a non-RL policy. At the same time, the results indicate that state representation materially changes RL quality: the best RL frontier improves from 12D to 30D, while 50D does not add a comparable improvement and may introduce saturation or instability for some algorithms.
 
 \section{Problem Framing and Research Motivation}
 
@@ -77,19 +86,128 @@ Because of that structural asymmetry, a shared threshold can be suboptimal even 
 
 This split-policy logic is especially important for interpretation of dimensionality. A richer state is useful only if the additional coordinates capture economically meaningful asymmetry. Several of the 20D, 30D, and 50D additions do exactly that: they add segment shares, segment-specific expected default indicators, accepted-share ratios, and threshold-gap history. The experiment is therefore not about abstract dimensionality for its own sake, but about whether a richer description of segmented weekly portfolio state helps the controller.
 
-\section{Reference Boundary and Current Repository Scope}
+\section{Literature Motivation and Research Hypotheses}
 
-The folder \texttt{Optimizing-Acceptance-Threshold-in-Credit-Scoring-using-Reinforcement-Learning-master} remains a reference-only snapshot and is not the source of truth for the current report. According to \texttt{notes/reference\_study.md}, the following mechanics were retained from the earlier study: weekly interaction, threshold control, delayed outcomes, delayed rewards, warm-up logic, and scenario-based distribution shift. The active implementation extends that foundation in several directions that are essential for the present thesis interpretation.
+The hypotheses are motivated by three established research streams: credit-scoring threshold choice as a cost-sensitive portfolio decision, reinforcement learning as sequential control with delayed rewards, and robust model evaluation under distribution shift.
+% TODO: Add a verified Q1/Q2/Q3 source on cost-sensitive threshold selection and portfolio-level credit scoring.
+% TODO: Add a verified source on reinforcement learning for delayed rewards and sequential financial decision-making.
+% TODO: Add a verified source on delayed feedback or delayed labels in credit-risk modelling.
+% TODO: Add a verified source on robust model evaluation under distribution shift.
+% TODO: Add a verified source on state representation and dimensionality in reinforcement learning.
 
-\begin{itemize}[leftmargin=*]
-    \item Split-policy control for new and repeat applicants is part of the main design rather than an edge case.
-    \item The experiment runner is configuration-driven and supports a controlled comparison of observation sizes.
-    \item Reward shaping includes explicit portfolio-level penalties for default rate, approval pressure, capital usage, and volatility.
-    \item The controller set is broader: DQN, Double-DQN, PPO, and SAC are compared against several non-RL baselines.
-    \item Evaluation is multi-scenario, multi-seed, and exported with bootstrap confidence intervals and figure-ready artifacts.
-\end{itemize}
+\subsection{Credit scoring, thresholds, and portfolio risk}
 
-This boundary is important because the thesis text should not describe the project as if it still used the original one-dimensional state or a single shared threshold only. The current repository is a more elaborate simulation framework whose immediate empirical focus is the controlled dimensionality study.
+Traditional credit scoring often starts from an application-level risk estimate and then chooses a cutoff that balances expected interest income against default losses. This logic is useful, but it is incomplete when the cutoff is applied repeatedly to a changing borrower population. A weekly threshold affects not only the current approval rate but also future realized defaults, outstanding exposure, capital usage, and the mix of new and repeat customers. The literature motivation for this thesis is therefore the gap between static cutoff optimization and sequential portfolio management.
+
+This perspective motivates the use of rule-based baselines in addition to RL agents. A weak static benchmark would make the RL comparison too easy. A stronger set of baselines is needed because practical credit-risk teams often use explicit policy rules, weekly monitoring indicators, and constraint checks. The comparison should therefore ask whether RL adds value over credible threshold policies, not whether it can beat an artificially weak rule.
+
+\subsection{Reinforcement learning, delayed outcomes, and state representation}
+
+Reinforcement learning is relevant because the controller acts before the full outcome of its decision is observed. In this thesis, accepted loans schedule repayment, default-loss, and recovery events in future weeks. This creates delayed feedback: a threshold that appears profitable immediately may later produce a worse portfolio once losses and capital pressure materialize. The correct evaluation object is therefore the full episode trajectory, including terminal settlement of pending events.
+
+State representation is a second key issue. If the state is too compact, the agent may not observe enough information about segment composition, recent defaults, capital headroom, or lagged portfolio performance. If the state is too rich relative to the training budget, the additional features can increase optimization difficulty or instability. This motivates the controlled comparison of 12D, 20D, 30D, and 50D observations.
+
+\subsection{Benchmarking and robustness}
+
+The thesis treats robustness as a scenario-level question. A policy that performs well only in a stable base market may not be useful under stress, drift, noisy observations, or class-imbalance shifts. Conversely, a policy that is not the global winner can still be informative if it produces lower default risk or better capital discipline in specific scenarios. This is why the results are interpreted by dimension, algorithm, scenario, and metric rather than by one average score alone.
+
+\subsection{Hypothesis H1: informative state improves RL up to an intermediate representation}
+
+\paragraph{Hypothesis formulation.}
+The results are expected to be consistent with the claim that richer state representations improve the best RL frontier from 12D to 30D, while the move from 30D to 50D does not necessarily create an additional improvement.
+
+\paragraph{Literature motivation.}
+Sequential decision models require state variables that summarize payoff-relevant history. In credit threshold control, relevant history includes approval, default, profit, capital usage, segment composition, and lagged threshold behavior. At the same time, the RL literature generally warns that higher-dimensional state spaces can require more data and more stable optimization.
+
+\paragraph{Research intuition.}
+The 12D state is a compact weekly dashboard. The 20D state adds current economic context, and the 30D state adds lagged and rolling memory. These additions should help a controller react to drift, noise, and changing portfolio quality. The 50D state adds richer segmentation and cumulative descriptors, but under the current quick-profile training budget those extra variables may add less incremental control value.
+
+\paragraph{Experimental check.}
+H1 is checked by comparing the best RL frontier across 12D, 20D, 30D, and 50D using cumulative reward, realized profit, NPV, default rate, approval rate, and capital usage.
+
+\paragraph{Visual evidence.}
+Figures \ref{fig:en-profit-vs-dim}--\ref{fig:en-default-vs-dim} show that the best-RL line improves from 12D to 30D and then flattens between 30D and 50D.
+
+\paragraph{Statistical evidence.}
+Table \ref{tab:en-stat-tests} reports the paired reward and default-rate comparisons used to evaluate whether the visual pattern is larger than run-level noise.
+
+\paragraph{Interpretation and decision.}
+The evidence is mixed but broadly consistent with the hypothesis. The 30D DQN controller has a significantly higher paired cumulative reward than 12D DQN. Against the 20D best-RL frontier, the 30D reward improvement is positive but not statistically significant at the 5\% level, while the default-rate improvement is statistically significant. The 30D and 50D DQN rewards are statistically indistinguishable. The hypothesis is therefore not rejected in its moderate form: 30D appears to be the most balanced state representation, but the stronger claim that it is strictly superior to every alternative on every metric is not established.
+
+\subsection{Hypothesis H2: RL gains are scenario-dependent rather than universal}
+
+\paragraph{Hypothesis formulation.}
+Reinforcement learning is expected to improve over rule-based policies only in some scenarios and metrics. The universal claim that RL robustly dominates strong rule-based baselines is expected to be rejected.
+
+\paragraph{Literature motivation.}
+Benchmark design matters in applied ML and RL evaluation. A learned controller should be compared with strong non-learning policies that use domain structure, not only with static or naive benchmarks. In credit scoring, weekly policy rules can exploit current score distributions, expected profitability, default pressure, and capital constraints directly.
+
+\paragraph{Research intuition.}
+Rule-based baselines have an advantage when the simulator's current-week economics are informative and when explicit constraint checks align closely with the reward function. RL may gain ground when richer state helps identify stable market structure or segment-specific dynamics, but it should not be expected to dominate every stress scenario.
+
+\paragraph{Experimental check.}
+H2 is checked by comparing the best RL controllers with \texttt{profit\_oriented}, \texttt{risk\_aware\_weekly}, and \texttt{constraint\_aware\_weekly} baselines across scenarios.
+
+\paragraph{Visual evidence.}
+Figures \ref{fig:en-scenario-bars-a}--\ref{fig:en-scenario-bars-b} show that scenario-level rankings differ by market condition and metric. Table \ref{tab:en-scenario-tradeoff-50} reports the clearest 50D winner view.
+
+\paragraph{Statistical evidence.}
+Table \ref{tab:en-stat-tests} reports paired reward comparisons between the best RL controllers and \texttt{profit\_oriented}. The scenario winner counts in \texttt{outputs/scenario\_winner\_counts.csv} provide an additional robustness summary.
+
+\paragraph{Interpretation and decision.}
+The evidence rejects the universal RL-superiority version of the hypothesis. Across all dimensions, RL wins only one out of six scenarios by cumulative reward and one out of six by realized profit. However, the evidence is not a simple failure of RL. In 30D and 50D, RL wins four out of six scenarios by lowest default rate, and in the 50D base market DQN is the reward, profit, and default-rate leader. The contribution to the main research question is therefore conditional: RL appears useful in selected environments and for selected portfolio-quality metrics, while strong rule-based threshold search remains the overall benchmark.
+
+\subsection{Hypothesis H3: delayed-outcome evaluation can change the interpretation of policy quality}
+
+\paragraph{Hypothesis formulation.}
+Early-period performance is expected to be an unreliable proxy for final realized portfolio quality when credit outcomes are delayed and terminal settlement is applied.
+
+\paragraph{Literature motivation.}
+Delayed feedback is central to sequential decision-making. In lending, a decision made today may affect losses and recoveries only after several weeks or months. Evaluating only the immediate cohort can therefore misrank policies that trade off short-run acceptance against later default losses.
+
+\paragraph{Research intuition.}
+Stricter policies may look worse early because they originate fewer loans and therefore produce lower immediate cumulative profit. The same policies can later look better if they avoid defaults and preserve capital. Terminal settlement is needed to avoid mechanically penalizing loans whose cash flows arrive after the last interactive decision week.
+
+\paragraph{Experimental check.}
+H3 is checked using the exported \texttt{locally\_worse\_globally\_better.csv} diagnostic and the paired early/final comparison in Table \ref{tab:en-stat-tests}.
+
+\paragraph{Visual evidence.}
+Figure \ref{fig:en-lwgb} shows the diagnostic case in which a controller is locally worse early in the episode but better by the final realized horizon.
+
+\paragraph{Statistical evidence.}
+Table \ref{tab:en-stat-tests} reports the paired early and final profit gaps for the 30D DQN adverse-stress comparison against \texttt{static\_threshold}.
+
+\paragraph{Interpretation and decision.}
+The evidence is consistent with the hypothesis for the diagnostic adverse-stress case. In 30D adverse stress, DQN is slightly behind \texttt{static\_threshold} at the early checkpoint, but it is substantially ahead by the final week after delayed outcomes are realized. This does not imply that RL is generally superior under stress; it shows that early rankings and final realized rankings can differ, which supports full-horizon robustness evaluation.
+
+\section{From the Original Framework to the Proposed Experimental Framework}
+
+The original acceptance-threshold repository is treated as a reference-only snapshot and is not modified by this thesis. According to the local reference-study notes, the reference idea includes weekly interaction, threshold control, delayed outcomes, delayed rewards, warm-up logic, and scenario-based distribution shifts. The present work uses that idea as a starting point and extends it into a broader experimental framework for robustness evaluation.
+
+The distinction matters for academic framing. The contribution is not that every component was built from scratch or that a new RL algorithm was invented. The contribution is that an existing threshold-optimization idea is transformed into a controlled research setup that can test state design, delayed-outcome accounting, portfolio constraints, scenario robustness, and strong non-RL benchmarks.
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{p{0.24\textwidth}p{0.32\textwidth}p{0.32\textwidth}}
+        \toprule
+        Component & Original framework & Proposed experimental extension \\
+        \midrule
+        Decision unit & Weekly threshold-control setup & Weekly portfolio-level split thresholds $(\tau^{new}_t,\tau^{repeat}_t)$ \\
+        Customer segmentation & Limited or secondary segmentation in the main narrative & Separate new and repeat customer dynamics, thresholds, and state variables \\
+        Outcome timing & Delayed outcomes and delayed reward idea & Explicit event queue, realized profit/NPV accounting, and terminal settlement of pending outcomes \\
+        Reward design & Profit-oriented reward signal & Profit, NPV, default risk, approval-rate pressure, capital usage, and volatility components \\
+        Scenario design & Distribution-shift experiments & Base market, adverse stress, drift, noise, class-imbalance shift, and split-policy dynamics \\
+        State representation & Compact state representation & Controlled 12D, 20D, 30D, and 50D state-dimensionality experiment \\
+        Controller set & Reinforcement learning agent versus traditional cutoff logic & DQN, Double-DQN, PPO, SAC, and five rule-based/static baselines \\
+        Evaluation logic & Algorithm performance comparison & Robustness evaluation by scenario, metric, state size, baseline strength, and statistical evidence \\
+        \bottomrule
+    \end{tabular}
+    \caption{From the original framework to the proposed experimental framework}
+    \label{tab:framework_extension}
+\end{table}
+
+Each extension is tied to the research question. Split thresholds test whether the controller can manage economically different customer segments. Delayed outcomes and terminal settlement make full-horizon realized performance observable. Multi-scenario simulation prevents conclusions from being driven by a single market regime. State-dimensionality experiments show whether richer portfolio information helps RL. Strong baselines make the comparison credible. Statistical testing adds a check against interpreting noisy simulation differences as robust improvements.
 
 \section{Environment and Portfolio Simulator}
 
@@ -197,7 +315,7 @@ This cumulative construction gives the state-size experiment a substantive inter
     \item The 50D state adds greater segmentation and stability detail. It is the richest description, but also the most demanding one for optimization and generalization.
 \end{itemize}
 
-From a methodological perspective, the central hypothesis is that the 20D and 30D enrichments add signal that is genuinely useful for portfolio control, whereas 50D may start to add complexity faster than control value. The results support exactly that intermediate-saturation interpretation.
+From a methodological perspective, the central hypothesis is that the 20D and 30D enrichments add signal that is useful for portfolio control, whereas 50D may start to add complexity faster than control value. The results are consistent with this intermediate-saturation interpretation, although the statistical evidence is mixed for some pairwise comparisons.
 
 \section{Controllers}
 
@@ -282,7 +400,7 @@ The main thesis evidence comes from the active \texttt{quick} profile. The merge
 The outputs are organized as follows.
 \begin{itemize}[leftmargin=*]
     \item One directory per observation size: \texttt{outputs/dim\_12/}, \texttt{outputs/dim\_20/}, \texttt{outputs/dim\_30/}, and \texttt{outputs/dim\_50/}.
-    \item Root-level cross-dimension summaries: \texttt{outputs/dimension\_comparison\_summary.csv}, \texttt{outputs/best\_rl\_by\_dimension.csv}, \texttt{outputs/overall\_best\_by\_dimension.csv}, and the \texttt{metric\_vs\_dimension\_*.png} figures.
+    \item Root-level cross-dimension summaries: the dimension-comparison CSV, the best-RL and overall-best CSVs, and the \texttt{metric\_vs\_dimension\_*.png} figures.
 \end{itemize}
 
 The controlled-protocol validation is one of the stronger aspects of the current repository state. The dimensionality pipeline checks that:
@@ -296,6 +414,36 @@ The controlled-protocol validation is one of the stronger aspects of the current
 \end{itemize}
 
 This validity layer is valuable for the thesis because it supports the claim that the reported saturation pattern is not an artifact of silent protocol drift.
+
+\section{Statistical Evaluation}
+
+The statistical checks use the exported run-level data rather than the already aggregated summary means. The script \texttt{scripts/run\_hypothesis\_tests.py} writes a hypothesis-test CSV and a scenario-winner-count CSV into the root output folder. The paired comparisons match observations by scenario, run id, and seed suffix, so that controllers are compared on the same simulated market conditions as far as the exported run structure allows.
+
+For each paired comparison, the reported effect is the mean difference ``left controller minus right controller.'' Positive values are better for cumulative reward and profit, while negative values are better for default rate. The table reports percentile bootstrap confidence intervals for the paired mean difference and a paired $t$-test p-value. The p-values are used as a robustness check, not as proof of universal superiority.
+
+\begin{table}[H]
+    \centering
+    \scriptsize
+    \begin{tabular}{p{0.09\textwidth}p{0.30\textwidth}p{0.15\textwidth}r r r}
+        \toprule
+        Hyp. & Paired comparison & Metric & Mean diff. & 95\% bootstrap CI & $p$-value \\
+        \midrule
+        H1 & 30D DQN -- 12D DQN & Reward & 10\,911.33 & [3\,486.20;\,19\,187.34] & 0.0083 \\
+        H1 & 30D DQN -- 20D Double-DQN & Reward & 8\,407.67 & [-1\,090.65;\,18\,743.52] & 0.1069 \\
+        H1 & 30D DQN -- 50D DQN & Reward & 21.30 & [-4\,838.63;\,5\,057.55] & 0.9933 \\
+        H1 & 30D DQN -- 20D Double-DQN & Default rate & -0.0075 & [-0.0111;\,-0.0040] & 0.0001 \\
+        H2 & 30D DQN -- \texttt{profit\_oriented} & Reward & -9\,860.91 & [-20\,135.77;\,600.15] & 0.0659 \\
+        H2 & 50D DQN -- \texttt{profit\_oriented} & Reward & -9\,882.20 & [-21\,444.47;\,1\,832.14] & 0.1007 \\
+        H2 & 50D DQN -- \texttt{profit\_oriented}, base market & Reward & 11\,430.02 & [-14\,433.60;\,39\,468.78] & 0.4456 \\
+        H3 & 30D DQN -- \texttt{static\_threshold}, adverse stress, week 6 & Profit & -643.46 & [-4\,156.75;\,3\,358.99] & 0.7550 \\
+        H3 & 30D DQN -- \texttt{static\_threshold}, adverse stress, week 25 & Profit & 250\,578.20 & [223\,505.18;\,276\,331.34] & $1.8\cdot10^{-9}$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Paired statistical checks from \texttt{outputs/statistical\_hypothesis\_tests.csv}.}
+    \label{tab:en-stat-tests}
+\end{table}
+
+The scenario winner counts add a complementary robustness view. By cumulative reward and realized profit, an RL controller wins one of six scenarios in every state dimension. By lowest default rate, RL wins one of six scenarios in 12D, zero in 20D, and four of six in both 30D and 50D. This result is central to the interpretation: RL is not the universal reward leader, but richer-state RL can produce stronger portfolio-quality outcomes in several scenarios.
 
 \section{Main Results}
 
@@ -633,9 +781,9 @@ The dimensionality experiment is most interesting where several metrics move in 
 
 This sequence is exactly the kind of portfolio trade-off that a thesis should emphasize. Better results do not always mean ``approve more'' or ``reduce default'' in isolation. What matters is the joint movement of profit, default, capital usage, and stability. The 30D result is strong because the joint movement is favorable. The 50D result is weaker because the additional approval and capital consumption do not translate into additional reward.
 
-\subsection{What the current results do and do not prove}
+\subsection{What the current results do and do not establish}
 
-The current evidence does prove several things.
+The current evidence establishes several limited but useful findings.
 \begin{itemize}[leftmargin=*]
     \item State design matters materially for RL quality.
     \item The marginal value of additional state information is non-linear.
@@ -643,7 +791,7 @@ The current evidence does prove several things.
     \item The benefit of richer state is algorithm-dependent.
 \end{itemize}
 
-It does \emph{not} prove that 50D is universally too large, that 30D would remain optimal under a much larger training budget, or that RL is incapable of learning genuinely dynamic weekly policies. Those stronger claims would require a longer-horizon training study, not only the current quick-profile outputs.
+It does \emph{not} establish that 50D is universally too large, that 30D would remain optimal under a much larger training budget, or that RL is incapable of learning genuinely dynamic weekly policies. Those stronger claims would require a longer-horizon training study, not only the current quick-profile outputs.
 
 \section{Limitations}
 
@@ -658,25 +806,33 @@ Several limitations should be stated directly.
 
 These limitations do not weaken the core methodological contribution. They simply define the correct boundary of the claim.
 
-\section{Novelty and Contribution}
+\section{Research Contribution}
 
-The novelty of the study lies less in inventing a brand-new RL algorithm and more in combining several research ingredients in one controlled experimental design.
+The contribution of the study lies less in inventing a brand-new RL algorithm and more in combining several research ingredients in one controlled experimental design.
 \begin{itemize}[leftmargin=*]
-    \item The project formulates credit-scoring control as weekly portfolio threshold management rather than one-shot application classification.
-    \item It makes delayed outcomes first-class objects of the environment, including late recovery and terminal settlement.
-    \item It models new and repeat applicants separately and allows simultaneous control of both thresholds.
-    \item It evaluates learned policies against a diverse and economically interpretable baseline set.
-    \item It turns state design itself into a controlled research variable and documents the resulting saturation effect.
+    \item \textbf{Methodological contribution:} credit-scoring control is formulated as weekly portfolio threshold management rather than one-shot application classification.
+    \item \textbf{Simulation contribution:} delayed outcomes, late recovery, realized NPV, capital usage, and terminal settlement are made explicit parts of the environment.
+    \item \textbf{Experimental contribution:} new and repeat applicants are controlled through separate thresholds, and state representation is varied through a controlled 12D--20D--30D--50D experiment.
+    \item \textbf{Benchmarking contribution:} learned policies are evaluated against a diverse and economically interpretable baseline set rather than against a weak static comparator only.
+    \item \textbf{Empirical contribution:} the results identify where RL works, where it is limited, and why scenario-level robustness is more informative than a single average score.
 \end{itemize}
 
-This is why the thesis contribution should be described as a contribution in \emph{problem formulation, simulation design, and experimental methodology}, not only as a leaderboard comparison.
+This is why the thesis contribution should be described as a contribution in \emph{problem formulation, simulation design, experimental methodology, and robustness interpretation}, not only as a leaderboard comparison.
 
 \section{Conclusion}
 
-The current repository supports a clear and evidence-based conclusion. Increasing observation dimensionality from 12 to 20 and then to 30 features improves the best RL frontier substantially. The largest gain occurs at 30D, where DQN reaches profit $66{,}758.29$, NPV $64{,}755.07$, cumulative reward $78{,}219.69$, and a reduced default rate of $0.1185$ with lower approval and capital usage than the 20D winner. Moving from 30D to 50D adds almost no additional reward and slightly weakens the portfolio balance, which is the signature of saturation.
+The goal of this thesis was to evaluate the robustness of a reinforcement learning framework for credit-scoring threshold optimization under different state representations, market scenarios, and portfolio constraints. The research question asked under which conditions reinforcement learning provides a robust improvement over rule-based threshold policies in a delayed-outcome credit-scoring environment.
 
-At the same time, the thesis should not compress the results into a simplistic RL-versus-baseline slogan. The strongest overall controller remains the rule-based \texttt{profit\_oriented} baseline, with \texttt{constraint\_aware\_weekly} essentially tied behind it. RL is already competitive and occasionally dominant in some scenarios, especially stable or richly segmented ones, but it is not yet the universal winner under the current quick-profile budget.
+The thesis achieved this goal by developing the original threshold-control idea into a richer experimental framework. The implemented environment models weekly split thresholds for new and repeat customers, delayed repayments and defaults, late recoveries, realized profit and NPV, capital usage, reward penalties, and terminal settlement. The evaluation covers four state representations, six market scenarios, four RL algorithms, and five rule-based or static baselines. Statistical evidence was added where run-level data allowed paired comparisons.
 
-The most defensible final statement is therefore the following. In this weekly delayed-outcome credit-scoring simulator, state representation is a first-order determinant of RL quality. Richer state adds real control value up to an intermediate regime, especially once lagged and rolling portfolio history are incorporated. Beyond that point, the marginal gain flattens and can even reverse for some algorithms. For the exported quick-profile results, 30D is the most balanced RL state design, 50D demonstrates diminishing returns, and strong rule-based baselines remain the benchmark that RL must still surpass more consistently.
+The first hypothesis, concerning state representation, receives mixed but meaningful evidence. Moving from 12D to 30D improves the best RL frontier, and the paired reward difference between 30D DQN and 12D DQN is statistically significant. The comparison with the 20D best-RL frontier is weaker on reward but favorable on default rate. The 30D and 50D reward comparison is statistically indistinguishable. Therefore, the results are consistent with the interpretation that 30D is the most balanced state representation in the current experiments, while additional features beyond that point do not automatically improve performance.
+
+The second hypothesis, concerning RL robustness against strong baselines, is scenario-dependent. The universal claim that RL dominates rule-based threshold policies is rejected. The strongest overall controller remains \texttt{profit\_oriented}, and \texttt{constraint\_aware\_weekly} is also highly competitive. At the same time, RL is not irrelevant: richer-state DQN achieves the lowest default rate in several 30D and 50D scenarios and becomes the best controller in the base-market case. This means that RL is useful under some conditions, but it is not yet a universal replacement for well-designed threshold rules.
+
+The third hypothesis, concerning delayed outcomes, is consistent with the exported diagnostics. The adverse-stress example shows that early and final rankings can differ after delayed cash flows are realized. This supports the use of full-horizon evaluation and terminal settlement. It also explains why the thesis focuses on realized portfolio trajectories rather than one-week approval or profit snapshots.
+
+Overall, the main answer to the research question is conditional. Reinforcement learning can be useful for dynamic credit-scoring threshold optimization when the state representation contains enough portfolio history and when the market scenario contains exploitable structure. However, strong rule-based baselines remain difficult to beat, especially under stress and drift, and more features do not necessarily lead to better policies. The project should therefore be interpreted as a robustness evaluation of RL-based threshold control, not as a claim of unconditional RL superiority.
+
+The main limitations remain the synthetic nature of the simulator, the short quick-profile training budget, the designed reward function, and the episode-static behavior of the best RL policies in the current runs. Future work should test longer training profiles, reward-sensitivity analysis, stronger adaptive RL policies, calibration on real or semi-synthetic credit data, and more explicit regulatory or capital constraints.
 
 \end{document}
