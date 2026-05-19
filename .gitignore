@@ -17,3 +17,6 @@ Claude*
 # IDE files
 /.vscode
 /.idea
+
+rl-credit-scoring-sim/outputs/
+rl-credit-scoring-sim/.venv/
