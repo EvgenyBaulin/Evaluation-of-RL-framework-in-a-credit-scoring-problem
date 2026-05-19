@@ -1,0 +1,2 @@
+[console_scripts]
+rlcs-run = rl_credit_scoring_sim.cli:main
