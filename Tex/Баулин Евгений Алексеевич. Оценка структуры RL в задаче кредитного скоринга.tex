@@ -16,7 +16,7 @@
 \usepackage{tabularx}
 \usepackage[unicode=true, colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
 
-\graphicspath{{../rl-credit-scoring-sim/outputs/}}
+\graphicspath{{../rl-credit-scoring-sim/outputs/}{./}}
 \setstretch{1.08}
 
 \begin{document}
@@ -68,11 +68,11 @@
     \vspace{10mm}
 
     \noindent\hfill\begin{tabular}{c@{\hskip 6mm}c@{\hskip 6mm}c}
-        18.05.2026                                          &
-        \rule{3cm}{0.4pt}                                   &
-        Lukianchenko P.P.                                     \\[-3mm]
-        \makebox[2cm]{\fontsize{6}{7}\selectfont Date}      &
-        \makebox[3cm]{\fontsize{6}{7}\selectfont Signature} &
+        18.05.2026                                                                                  &
+        \raisebox{-0.5cm}{\includegraphics[width=3cm,height=1.2cm,keepaspectratio]{Signature.jpeg}} &
+        Lukianchenko P.P.                                                                             \\[-3mm]
+        \makebox[2cm]{\fontsize{6}{7}\selectfont Date}                                              &
+        \makebox[3cm]{\fontsize{6}{7}\selectfont Signature}                                         &
         \makebox[3cm]{\fontsize{6}{7}\selectfont Initials}
     \end{tabular}
 
@@ -229,11 +229,6 @@ This split-policy logic is especially important for interpretation of dimensiona
 \section{Literature Motivation and Research Hypotheses}
 
 The hypotheses are motivated by three established research streams: credit-scoring threshold choice as a cost-sensitive portfolio decision, reinforcement learning as sequential control with delayed rewards, and robust model evaluation under distribution shift.
-% TODO: Add a verified Q1/Q2/Q3 source on cost-sensitive threshold selection and portfolio-level credit scoring.
-% TODO: Add a verified source on reinforcement learning for delayed rewards and sequential financial decision-making.
-% TODO: Add a verified source on delayed feedback or delayed labels in credit-risk modelling.
-% TODO: Add a verified source on robust model evaluation under distribution shift.
-% TODO: Add a verified source on state representation and dimensionality in reinforcement learning.
 
 \subsection{Credit scoring, thresholds, and portfolio risk}
 
