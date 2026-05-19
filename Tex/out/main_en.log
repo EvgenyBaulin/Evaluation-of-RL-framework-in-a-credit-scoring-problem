@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  26 APR 2026 18:10
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  19 MAY 2026 15:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -702,27 +702,27 @@ File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 (out/main_en.aux)
 \openout1 = `main_en.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Info: Redefining \th on input line 26.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Info: Redefining \th on input line 22.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -758,20 +758,20 @@ LaTeX Info: Redefining \th on input line 26.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Info: Redefining \microtypecontext on input line 26.
-Package microtype Info: Applying patch `item' on input line 26.
-Package microtype Info: Applying patch `toc' on input line 26.
-Package microtype Info: Applying patch `eqnum' on input line 26.
-Package microtype Info: Applying patch `footnote' on input line 26.
-Package microtype Info: Applying patch `verbatim' on input line 26.
-LaTeX Info: Redefining \microtypesetup on input line 26.
+LaTeX Info: Redefining \microtypecontext on input line 22.
+Package microtype Info: Applying patch `item' on input line 22.
+Package microtype Info: Applying patch `toc' on input line 22.
+Package microtype Info: Applying patch `eqnum' on input line 22.
+Package microtype Info: Applying patch `footnote' on input line 22.
+Package microtype Info: Applying patch `verbatim' on input line 22.
+LaTeX Info: Redefining \microtypesetup on input line 22.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 26.
+LaTeX Info: Redefining \showhyphens on input line 22.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -814,13 +814,13 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 Package color Info: Driver file: pdftex.def on input line 149.
 
 (/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/mathcolor.ltx))
-Package hyperref Info: Link coloring ON on input line 26.
+Package hyperref Info: Link coloring ON on input line 22.
 
 (out/main_en.out) (out/main_en.out)
 \@outlinefile=\write3
 \openout3 = `main_en.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 54.
 
 
 (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
@@ -829,7 +829,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 (/usr/local/texlive/2025/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 54.
 
 
 (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -838,27 +838,15 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 (/usr/local/texlive/2025/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-(out/main_en.toc
 
 [1
 
 {/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
-al/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}])
-\tf@toc=\write4
-\openout4 = `main_en.toc'.
-
-
-
-[2]
-
-[3
-
-]
-
-[4]
+al/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]
 LaTeX Font Info:    Trying to load font information for T2A+cmtt on input line 
-79.
- (/usr/local/texlive/2025/texmf-dist/tex/latex/cyrillic/t2acmtt.fd
+94.
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/cyrillic/t2acmtt.fd
 File: t2acmtt.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
 )
 Package microtype Info: Loading generic protrusion settings for font family
@@ -866,11 +854,41 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
+Overfull \hbox (41.93947pt too wide) in paragraph at lines 96--97
+[]\T2A/cmr/m/n/12 (-20) The main find-ings are as fol-lows. The best over-all c
+on-troller is the rule-based \T2A/cmtt/m/n/12 constraint_aware_weekly
+ []
+
+
+
+[2]
+
+[3] (out/main_en.toc
+
+[4
+
+])
+\tf@toc=\write4
+\openout4 = `main_en.toc'.
+
+
 
 [5]
 
-[6]
-Overfull \hbox (3.65417pt too wide) in paragraph at lines 149--150
+[6
+
+]
+
+[7]
+
+[8]
+
+[9]
+
+[10]
+
+[11]
+Overfull \hbox (3.65417pt too wide) in paragraph at lines 275--276
  []\T2A/cmr/bx/n/12 (-20) Experimental check.[] \T2A/cmr/m/n/12 (-20) H2 is che
 cked by com-par-ing the best RL con-trollers with \T2A/cmtt/m/n/12 profit_orien
 ted\T2A/cmr/m/n/12 (-20) ,
@@ -878,59 +896,103 @@ ted\T2A/cmr/m/n/12 (-20) ,
 
 
 
-[7]
+[12]
 
-[8]
-Underfull \hbox (badness 2012) in paragraph at lines 198--199
+[13]
+Underfull \hbox (badness 2012) in paragraph at lines 326--327
 []|\T2A/cmr/m/n/10.95 (+20) Explicit event queue, re-al-ized
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 199--200
+Underfull \hbox (badness 10000) in paragraph at lines 327--328
 []|\T2A/cmr/m/n/10.95 (+20) Profit, NPV, de-fault risk,
  []
 
 
-Underfull \hbox (badness 2521) in paragraph at lines 199--200
+Underfull \hbox (badness 2521) in paragraph at lines 327--328
 \T2A/cmr/m/n/10.95 (+20) approval-rate pres-sure, cap-i-tal
  []
 
 
-Underfull \hbox (badness 2426) in paragraph at lines 203--204
+Underfull \hbox (badness 2426) in paragraph at lines 331--332
 []|\T2A/cmr/m/n/10.95 (+20) Robustness eval-u-a-tion by sce-
  []
 
 
 
-[9]
-
-[10{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.en
-c}]
-Overfull \hbox (19.56125pt too wide) in paragraph at lines 255--255
-[]|\T2A/cmtt/m/n/10.95 class_imbalance_shift| 
- []
-
-
-Overfull \hbox (19.56125pt too wide) in paragraph at lines 255--255
-[]|\T2A/cmtt/m/n/10.95 split_policy_dynamics| 
- []
+[14]
+<../rl-credit-scoring-sim/outputs/diagrams/episode_timeline.png, id=519, 821.06
+75pt x 303.534pt>
+File: ../rl-credit-scoring-sim/outputs/diagrams/episode_timeline.png Graphic fi
+le (type png)
+<use ../rl-credit-scoring-sim/outputs/diagrams/episode_timeline.png>
+Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/diagrams/episode_time
+line.png  used on input line 355.
+(pdftex.def)             Requested size: 456.62299pt x 168.80145pt.
 
 
+[15 <../rl-credit-scoring-sim/outputs/diagrams/episode_timeline.png>]
+<../rl-credit-scoring-sim/outputs/diagrams/weekly_flowchart.png, id=530, 807.41
+65pt x 459.316pt>
+File: ../rl-credit-scoring-sim/outputs/diagrams/weekly_flowchart.png Graphic fi
+le (type png)
+<use ../rl-credit-scoring-sim/outputs/diagrams/weekly_flowchart.png>
+Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/diagrams/weekly_flowc
+hart.png  used on input line 374.
+(pdftex.def)             Requested size: 476.48044pt x 271.05716pt.
 
-[11]
-Underfull \hbox (badness 6859) in paragraph at lines 305--305
+
+[16{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.en
+c} <../rl-credit-scoring-sim/outputs/diagrams/weekly_flowchart.png>]
+<../rl-credit-scoring-sim/outputs/diagrams/loan_lifecycle.png, id=538, 852.3845
+pt x 320.397pt>
+File: ../rl-credit-scoring-sim/outputs/diagrams/loan_lifecycle.png Graphic file
+ (type png)
+<use ../rl-credit-scoring-sim/outputs/diagrams/loan_lifecycle.png>
+Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/diagrams/loan_lifecyc
+le.png  used on input line 398.
+(pdftex.def)             Requested size: 456.62299pt x 171.63803pt.
+<../rl-credit-scoring-sim/outputs/diagrams/delayed_reward.png, id=539, 798.182p
+t x 336.8585pt>
+File: ../rl-credit-scoring-sim/outputs/diagrams/delayed_reward.png Graphic file
+ (type png)
+<use ../rl-credit-scoring-sim/outputs/diagrams/delayed_reward.png>
+Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/diagrams/delayed_rewa
+rd.png  used on input line 412.
+(pdftex.def)             Requested size: 456.62299pt x 192.71037pt.
+
+
+[17 <../rl-credit-scoring-sim/outputs/diagrams/loan_lifecycle.png>]
+
+[18 <../rl-credit-scoring-sim/outputs/diagrams/delayed_reward.png>]
+
+[19]
+
+[20]
+Underfull \hbox (badness 6859) in paragraph at lines 540--540
 []|\T2A/cmr/m/n/10.95 (+20) 30D plus richer seg-ment and sta-bil-ity de-scrip-t
 ors: segment-specific ap-
  []
 
 
 
-[12]
+[21]
+<../rl-credit-scoring-sim/outputs/diagrams/state_dimension_layers.png, id=574, 
+798.182pt x 626.34pt>
+File: ../rl-credit-scoring-sim/outputs/diagrams/state_dimension_layers.png Grap
+hic file (type png)
+<use ../rl-credit-scoring-sim/outputs/diagrams/state_dimension_layers.png>
+Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/diagrams/state_dimens
+ion_layers.png  used on input line 557.
+(pdftex.def)             Requested size: 456.62299pt x 358.31728pt.
 
-[13]
 
-[14]
-Overfull \hbox (28.94775pt too wide) in paragraph at lines 366--367
+[22]
+
+[23 <../rl-credit-scoring-sim/outputs/diagrams/state_dimension_layers.png>]
+
+[24]
+Overfull \hbox (28.94775pt too wide) in paragraph at lines 654--655
 \T2A/cmr/m/n/12 (-20) high-est \T2A/cmtt/m/n/12 expected_profit_mean\T2A/cmr/m/
 n/12 (-20) , then high-est \T2A/cmtt/m/n/12 stability_index_mean\T2A/cmr/m/n/12
  (-20) , then low-est \T2A/cmtt/m/n/12 default_rate_mean\T2A/cmr/m/n/12 (-20) .
@@ -939,109 +1001,102 @@ n/12 (-20) , then high-est \T2A/cmtt/m/n/12 stability_index_mean\T2A/cmr/m/n/12
 
 
 
-[15]
+[25]
 
-[16]
-Overfull \hbox (0.9342pt too wide) in paragraph at lines 427--442
- [][] 
+[26]
+
+[27]
+Underfull \hbox (badness 10000) in paragraph at lines 756--756
+[]\T2A/cmr/m/n/12 (+20) Table 5: |Best over-all con-troller by di-men-sion from
+ full-profile run
  []
 
 
 
-[17]
+[28]
 
-[18]
-<../rl-credit-scoring-sim/outputs/metric_vs_dimension_expected_profit.png, id=4
-60, 697.807pt x 408.3255pt>
+[29]
+<../rl-credit-scoring-sim/outputs/metric_vs_dimension_expected_profit.png, id=6
+31, 697.807pt x 408.3255pt>
 File: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_expected_profit.png 
 Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/metric_vs_dimension_expected_profit.png>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_e
-xpected_profit.png  used on input line 551.
+xpected_profit.png  used on input line 851.
 (pdftex.def)             Requested size: 406.99449pt x 238.16228pt.
 
 
-[19]
-<../rl-credit-scoring-sim/outputs/metric_vs_dimension_npv.png, id=467, 697.807p
+[30]
+<../rl-credit-scoring-sim/outputs/metric_vs_dimension_npv.png, id=636, 697.807p
 t x 408.3255pt>
 File: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_npv.png Graphic file
  (type png)
 <use ../rl-credit-scoring-sim/outputs/metric_vs_dimension_npv.png>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_n
-pv.png  used on input line 558.
+pv.png  used on input line 858.
 (pdftex.def)             Requested size: 406.99449pt x 238.16228pt.
 <../rl-credit-scoring-sim/outputs/metric_vs_dimension_cumulative_reward.png, id
-=468, 697.807pt x 408.3255pt>
+=637, 697.807pt x 408.3255pt>
 File: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_cumulative_reward.pn
 g Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/metric_vs_dimension_cumulative_reward.png
 >
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_c
-umulative_reward.png  used on input line 565.
+umulative_reward.png  used on input line 865.
 (pdftex.def)             Requested size: 406.99449pt x 238.16228pt.
 
 
-[20 <../rl-credit-scoring-sim/outputs/metric_vs_dimension_expected_profit.png> 
+[31 <../rl-credit-scoring-sim/outputs/metric_vs_dimension_expected_profit.png> 
 <../rl-credit-scoring-sim/outputs/metric_vs_dimension_npv.png>]
-<../rl-credit-scoring-sim/outputs/metric_vs_dimension_default_rate.png, id=476,
+<../rl-credit-scoring-sim/outputs/metric_vs_dimension_default_rate.png, id=646,
  697.807pt x 408.3255pt>
 File: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_default_rate.png Gra
 phic file (type png)
 <use ../rl-credit-scoring-sim/outputs/metric_vs_dimension_default_rate.png>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_d
-efault_rate.png  used on input line 572.
+efault_rate.png  used on input line 872.
 (pdftex.def)             Requested size: 406.99449pt x 238.16228pt.
-<../rl-credit-scoring-sim/outputs/metric_vs_dimension_stability_index.png, id=4
-77, 697.807pt x 408.3255pt>
+<../rl-credit-scoring-sim/outputs/metric_vs_dimension_stability_index.png, id=6
+47, 697.807pt x 408.3255pt>
 File: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_stability_index.png 
 Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/metric_vs_dimension_stability_index.png>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/metric_vs_dimension_s
-tability_index.png  used on input line 579.
+tability_index.png  used on input line 879.
 (pdftex.def)             Requested size: 406.99449pt x 238.16228pt.
 
 
-[21 <../rl-credit-scoring-sim/outputs/metric_vs_dimension_cumulative_reward.png
+[32 <../rl-credit-scoring-sim/outputs/metric_vs_dimension_cumulative_reward.png
 > <../rl-credit-scoring-sim/outputs/metric_vs_dimension_default_rate.png>]
-Underfull \hbox (badness 2932) in paragraph at lines 609--610
-[]|\T2A/cmr/m/n/10.95 (+20) Lowest-default win-
+Overfull \hbox (4.63794pt too wide) in paragraph at lines 922--922
+[]|\T2A/cmtt/m/n/10 constraint_aware_weekly|  
  []
 
 
-Overfull \hbox (14.5931pt too wide) in paragraph at lines 613--613
-[]|\T2A/cmtt/m/n/10.95 class_imbalance_shift| 
+Overfull \hbox (4.63794pt too wide) in paragraph at lines 922--922
+[]|\T2A/cmtt/m/n/10 constraint_aware_weekly|  
  []
 
 
-Overfull \hbox (30.87799pt too wide) in paragraph at lines 613--613
-[]|\T2A/cmtt/m/n/10.95 constraint_aware_weekly| 
+Overfull \hbox (4.63794pt too wide) in paragraph at lines 922--922
+[]|\T2A/cmtt/m/n/10 constraint_aware_weekly|  
  []
 
 
-Overfull \hbox (25.90984pt too wide) in paragraph at lines 613--613
-[]|\T2A/cmtt/m/n/10.95 constraint_aware_weekly| 
- []
-
-
-Overfull \hbox (14.5931pt too wide) in paragraph at lines 616--616
-[]|\T2A/cmtt/m/n/10.95 split_policy_dynamics| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 619--619
+Underfull \hbox (badness 10000) in paragraph at lines 923--923
 []\T2A/cmr/m/n/12 (+20) Table 8: |Reward-profit-risk lead-ers in the 50D run, c
 om-puted from
  []
 
 
 
-[22 <../rl-credit-scoring-sim/outputs/metric_vs_dimension_stability_index.png>]
+[33 <../rl-credit-scoring-sim/outputs/metric_vs_dimension_stability_index.png>]
 
 
-[23]
+[34]
 
-[24]
-Overfull \hbox (5.06702pt too wide) in paragraph at lines 685--686
+[35]
+Overfull \hbox (5.06702pt too wide) in paragraph at lines 989--990
 \T2A/cmr/m/n/12 (-20) volatility means are large---about $\OT1/cmr/m/n/12 (-20)
  9\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 (-20) 83$ \T2A/cmr/m/n/12 (-20) for \T2A/cm
 tt/m/n/12 profit_oriented \T2A/cmr/m/n/12 (-20) and $\OT1/cmr/m/n/12 (-20) 9\OM
@@ -1051,132 +1106,144 @@ n/12 constraint_aware_weekly
 
 
 
-[25]
+[36]
 <../rl-credit-scoring-sim/outputs/dim_30/locally_worse_globally_better.png, id=
-507, 842.347pt x 408.3255pt>
+678, 842.347pt x 408.3255pt>
 File: ../rl-credit-scoring-sim/outputs/dim_30/locally_worse_globally_better.png
  Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/dim_30/locally_worse_globally_better.png>
 
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/dim_30/locally_worse_
-globally_better.png  used on input line 691.
+globally_better.png  used on input line 995.
 (pdftex.def)             Requested size: 406.99449pt x 197.28372pt.
 <../rl-credit-scoring-sim/outputs/dim_12/expected_profit_by_scenario_dim12.png,
- id=509, 986.887pt x 480.194pt>
+ id=680, 986.887pt x 480.194pt>
 File: ../rl-credit-scoring-sim/outputs/dim_12/expected_profit_by_scenario_dim12
 .png Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/dim_12/expected_profit_by_scenario_dim12.
 png>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/dim_12/expected_profi
-t_by_scenario_dim12.png  used on input line 704.
+t_by_scenario_dim12.png  used on input line 1008.
 (pdftex.def)             Requested size: 238.23642pt x 115.91568pt.
 <../rl-credit-scoring-sim/outputs/dim_30/expected_profit_by_scenario_dim30.png,
- id=510, 986.887pt x 480.194pt>
+ id=681, 986.887pt x 480.194pt>
 File: ../rl-credit-scoring-sim/outputs/dim_30/expected_profit_by_scenario_dim30
 .png Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/dim_30/expected_profit_by_scenario_dim30.
 png>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/dim_30/expected_profi
-t_by_scenario_dim30.png  used on input line 710.
+t_by_scenario_dim30.png  used on input line 1014.
 (pdftex.def)             Requested size: 238.23642pt x 115.91568pt.
-
-
-[26 <../rl-credit-scoring-sim/outputs/dim_30/locally_worse_globally_better.png>
-]
 <../rl-credit-scoring-sim/outputs/dim_50/expected_profit_by_scenario_dim50.png,
- id=516, 986.887pt x 480.194pt>
+ id=682, 986.887pt x 480.194pt>
 File: ../rl-credit-scoring-sim/outputs/dim_50/expected_profit_by_scenario_dim50
 .png Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/dim_50/expected_profit_by_scenario_dim50.
 png>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/dim_50/expected_profi
-t_by_scenario_dim50.png  used on input line 721.
+t_by_scenario_dim50.png  used on input line 1025.
 (pdftex.def)             Requested size: 238.23642pt x 115.91568pt.
 <../rl-credit-scoring-sim/outputs/dim_50/default_rate_by_scenario_dim50.png, id
-=517, 986.887pt x 480.194pt>
+=683, 986.887pt x 480.194pt>
 File: ../rl-credit-scoring-sim/outputs/dim_50/default_rate_by_scenario_dim50.pn
 g Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/dim_50/default_rate_by_scenario_dim50.png
 >
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/dim_50/default_rate_b
-y_scenario_dim50.png  used on input line 727.
+y_scenario_dim50.png  used on input line 1031.
 (pdftex.def)             Requested size: 238.23642pt x 115.91568pt.
+
+
+[37 <../rl-credit-scoring-sim/outputs/dim_30/locally_worse_globally_better.png>
+ <../rl-credit-scoring-sim/outputs/dim_12/expected_profit_by_scenario_dim12.png
+> <../rl-credit-scoring-sim/outputs/dim_30/expected_profit_by_scenario_dim30.pn
+g>]
 <../rl-credit-scoring-sim/outputs/dim_30/capital_usage_by_scenario_dim30.png, i
-d=518, 986.887pt x 480.194pt>
+d=692, 986.887pt x 480.194pt>
 File: ../rl-credit-scoring-sim/outputs/dim_30/capital_usage_by_scenario_dim30.p
 ng Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/dim_30/capital_usage_by_scenario_dim30.pn
 g>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/dim_30/capital_usage_
-by_scenario_dim30.png  used on input line 738.
+by_scenario_dim30.png  used on input line 1042.
 (pdftex.def)             Requested size: 238.23642pt x 115.91568pt.
 <../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.png, i
-d=519, 986.887pt x 480.194pt>
+d=693, 986.887pt x 480.194pt>
 File: ../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.p
 ng Graphic file (type png)
 <use ../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.pn
 g>
 Package pdftex.def Info: ../rl-credit-scoring-sim/outputs/dim_30/approval_rate_
-by_scenario_dim30.png  used on input line 744.
+by_scenario_dim30.png  used on input line 1048.
 (pdftex.def)             Requested size: 238.23642pt x 115.91568pt.
 
 
-[27 <../rl-credit-scoring-sim/outputs/dim_12/expected_profit_by_scenario_dim12.
-png> <../rl-credit-scoring-sim/outputs/dim_30/expected_profit_by_scenario_dim30
-.png> <../rl-credit-scoring-sim/outputs/dim_50/expected_profit_by_scenario_dim5
-0.png> <../rl-credit-scoring-sim/outputs/dim_50/default_rate_by_scenario_dim50.
-png> <../rl-credit-scoring-sim/outputs/dim_30/capital_usage_by_scenario_dim30.p
-ng> <../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.pn
-g>]
+[38 <../rl-credit-scoring-sim/outputs/dim_50/expected_profit_by_scenario_dim50.
+png> <../rl-credit-scoring-sim/outputs/dim_50/default_rate_by_scenario_dim50.pn
+g> <../rl-credit-scoring-sim/outputs/dim_30/capital_usage_by_scenario_dim30.png
+> <../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.png>
+]
 
-[28]
+[39]
 
-[29]
+[40]
 
-[30]
+[41] (out/main_en.bbl
 
-[31] (out/main_en.aux)
+[42])
+
+[43] (out/main_en.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main_en.out' has not changed.
-(rerunfilecheck)             Checksum: 3C512B365962239053C3ACD8FCA3C887;12676.
+(rerunfilecheck)             Checksum: 725B62F1C3376833813841D43624FC67;15487.
  ) 
 Here is how much of TeX's memory you used:
- 17785 strings out of 473190
- 291281 string characters out of 5715801
- 730538 words of memory out of 5000000
- 40416 multiletter control sequences out of 15000+600000
- 587238 words of font info for 209 fonts, out of 8000000 for 9000
+ 17966 strings out of 473190
+ 295999 string characters out of 5715801
+ 735444 words of memory out of 5000000
+ 40507 multiletter control sequences out of 15000+600000
+ 588439 words of font info for 223 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,1004b,615s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
-></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
-</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><
-/usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></u
-sr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr
-/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/l
-ocal/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/loca
-l/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/t
-exlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
-xlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texl
-ive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texliv
-e/2025/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/
-2025/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/20
-25/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive/2025
-/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2025/t
-exmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2025/tex
-mf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2025/texmf
--dist/fonts/type1/public/cm-super/sfrm2074.pfb></usr/local/texlive/2025/texmf-d
-ist/fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2025/texmf-dis
-t/fonts/type1/public/cm-super/sftt0800.pfb></usr/local/texlive/2025/texmf-dist/
-fonts/type1/public/cm-super/sftt1095.pfb></usr/local/texlive/2025/texmf-dist/fo
-nts/type1/public/cm-super/sftt1200.pfb>
-Output written on out/main_en.pdf (31 pages, 2055938 bytes).
+ 75i,12n,79p,1031b,625s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exist
+, replaced by a fixed one
+
+</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
+/usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></
+usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></u
+sr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr
+/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/l
+ocal/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/loc
+al/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/
+texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/tex
+live/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texl
+ive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texliv
+e/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/
+2025/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/20
+25/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/2025
+/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive/2025/t
+exmf-dist/fonts/type1/public/cm-super/sfrm0600.pfb></usr/local/texlive/2025/tex
+mf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2025/texmf
+-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2025/texmf-d
+ist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2025/texmf-dis
+t/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2025/texmf-dist/
+fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2025/texmf-dist/fo
+nts/type1/public/cm-super/sftt0800.pfb></usr/local/texlive/2025/texmf-dist/font
+s/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/
+type1/public/cm-super/sftt1095.pfb></usr/local/texlive/2025/texmf-dist/fonts/ty
+pe1/public/cm-super/sftt1200.pfb>
+Output written on out/main_en.pdf (43 pages, 2771236 bytes).
 PDF statistics:
- 680 PDF objects out of 1000 (max. 8388607)
- 572 compressed objects within 6 object streams
- 145 named destinations out of 1000 (max. 500000)
- 43533 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 878 PDF objects out of 1000 (max. 8388607)
+ 742 compressed objects within 8 object streams
+ 194 named destinations out of 1000 (max. 500000)
+ 44158 words of extra memory for PDF output out of 51595 (max. 10000000)
 

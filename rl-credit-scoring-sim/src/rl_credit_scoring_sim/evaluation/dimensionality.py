@@ -22,6 +22,7 @@ from rl_credit_scoring_sim.plotting.plots import (
     plot_metric_bars,
     plot_metric_vs_dimension,
 )
+from rl_credit_scoring_sim.utils.progress import ExperimentProgress
 
 
 REQUIRED_DIMENSION_CSVS = [
@@ -745,6 +746,8 @@ def run_dimensionality_experiment(
     project_root: str | Path,
     profile: str | None = None,
     state_dims: list[int] | None = None,
+    device: str = "cpu",
+    parallelize: bool = False,
 ) -> dict[str, Any]:
     project_root = Path(project_root)
     dims = [int(dim) for dim in (state_dims or list(ALLOWED_STATE_DIMS))]
@@ -763,21 +766,36 @@ def run_dimensionality_experiment(
 
     for state_dim in dims:
         overrides = _dimension_overrides(state_dim)
+        overrides["device"] = device
         config = load_run_config(project_root, profile=profile, overrides=overrides)
         configs_by_dim[state_dim] = config
-        try:
-            result = execute_pipeline(config=config, scenarios=shared_scenarios)
-            selection = _build_dimension_specific_artifacts(result, state_dim)
-            result["selection"] = selection
-            results[state_dim] = result
-        except Exception as exc:  # noqa: BLE001
-            failures.append(
-                {
-                    "state_dim": state_dim,
-                    "error": str(exc),
-                    "traceback": traceback.format_exc(),
-                }
-            )
+
+    if parallelize and len(dims) > 1:
+        from rl_credit_scoring_sim.utils.parallelization import run_dims_parallel
+        results, failures = run_dims_parallel(
+            dims=dims,
+            configs_by_dim=configs_by_dim,
+            shared_scenarios=shared_scenarios,
+            build_artifacts_fn=_build_dimension_specific_artifacts,
+        )
+    else:
+        with ExperimentProgress(total=len(dims), title="Dimensionality Experiment") as exp:
+            for state_dim in dims:
+                config = configs_by_dim[state_dim]
+                try:
+                    result = execute_pipeline(config=config, scenarios=shared_scenarios)
+                    selection = _build_dimension_specific_artifacts(result, state_dim)
+                    result["selection"] = selection
+                    results[state_dim] = result
+                except Exception as exc:  # noqa: BLE001
+                    failures.append(
+                        {
+                            "state_dim": state_dim,
+                            "error": str(exc),
+                            "traceback": traceback.format_exc(),
+                        }
+                    )
+                exp.update(label=f"dim={state_dim}")
 
     comparison_df = pd.DataFrame()
     best_rl_df = pd.DataFrame()

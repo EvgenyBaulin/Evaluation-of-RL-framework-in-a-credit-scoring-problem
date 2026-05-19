@@ -268,6 +268,11 @@ INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam1
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /Users/evgenybaulin/Library/texlive/2025/texmf-var/fonts/tfm/lh/lh-t2a/latt1095.tfm
 INPUT /Users/evgenybaulin/Library/texlive/2025/texmf-var/fonts/tfm/lh/lh-t2a/larm0800.tfm
+INPUT /Users/evgenybaulin/Library/texlive/2025/texmf-var/fonts/tfm/lh/lh-t2a/larm1000.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
+INPUT /Users/evgenybaulin/Library/texlive/2025/texmf-var/fonts/tfm/lh/lh-t2a/larm0700.tfm
 INPUT /Users/evgenybaulin/Library/texlive/2025/texmf-var/fonts/tfm/lh/lh-t2a/latt0800.tfm
 INPUT /Users/evgenybaulin/Library/texlive/2025/texmf-var/fonts/tfm/lh/lh-t2a/larm0600.tfm
 INPUT /Users/evgenybaulin/Library/texlive/2025/texmf-var/fonts/tfm/lh/lh-t2a/latt0800.tfm
@@ -315,6 +320,9 @@ INPUT ../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.pn
 INPUT ../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.png
 INPUT ../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.png
 INPUT ../rl-credit-scoring-sim/outputs/dim_30/approval_rate_by_scenario_dim30.png
+INPUT out/main_ru.bbl
+INPUT out/main_ru.bbl
+INPUT out/main_ru.bbl
 INPUT out/main_ru.aux
 INPUT out/main_ru.out
 INPUT out/main_ru.out
@@ -327,6 +335,7 @@ INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.p
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb

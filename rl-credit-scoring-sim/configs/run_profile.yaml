@@ -90,6 +90,8 @@ shared:
     agents:
       - dqn
       - double_dqn
+      - a3c
+      - a2c
       - ppo
       - sac
     baselines:
@@ -148,6 +150,20 @@ shared:
       gae_lambda: 0.95
       ent_coef: 0.01
       clip_range: 0.20
+    a3c:
+      hidden_sizes: [128, 128]
+      learning_rate: 0.0005
+      gamma: 0.98
+      entropy_coef: 0.01
+      value_coef: 0.5
+    a2c:
+      policy_kwargs:
+        net_arch: [128, 128]
+      learning_rate: 0.0007
+      n_steps: 256
+      gamma: 0.98
+      gae_lambda: 0.95
+      ent_coef: 0.01
     sac:
       policy_kwargs:
         net_arch: [128, 128]

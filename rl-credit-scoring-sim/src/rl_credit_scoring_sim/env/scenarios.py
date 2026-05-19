@@ -4,11 +4,26 @@ import math
 from copy import deepcopy
 
 
+# === CALIBRATION AUDIT ===
+# Original parameters (before pre-defense recalibration):
+#   new:    default_intercept = -1.15  → produced portfolio default rates ~12-13%
+#   repeat: default_intercept = -1.75  → produced portfolio default rates ~10-11%
+# Target ranges (real-world retail lending, recalibrated 2025-05-15):
+#   base_market:           4–6%
+#   drift:                 6–9%
+#   adverse_stress:        9–14%
+#   class_imbalance_shift: 5–8%
+#   noise:                 4–7%
+#   split_policy_dynamics: new 7–10%, repeat 2–4%
+# Sources: Bank of Russia (Form 0409115), ECB SSM loan loss data,
+#          Moody's Consumer ABS default indices.
+# =========================
+
 BASE_SEGMENT_PARAMS = {
     "new": {
         "score_mean": 59.0,
         "score_std": 13.0,
-        "default_intercept": -1.15,
+        "default_intercept": -2.3,
         "score_sensitivity": 0.18,
         "loan_amount_mean": 1650.0,
         "loan_amount_sigma": 0.28,
@@ -22,7 +37,7 @@ BASE_SEGMENT_PARAMS = {
     "repeat": {
         "score_mean": 69.0,
         "score_std": 10.0,
-        "default_intercept": -1.75,
+        "default_intercept": -2.6,
         "score_sensitivity": 0.20,
         "loan_amount_mean": 2150.0,
         "loan_amount_sigma": 0.25,

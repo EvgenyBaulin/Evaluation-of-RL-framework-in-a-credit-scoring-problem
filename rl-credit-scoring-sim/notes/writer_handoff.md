@@ -3,7 +3,7 @@
 ## 1. Repository focus
 
 The repository is now centered on a controlled state-dimensionality experiment for the weekly threshold-control RL framework.
-- Active comparison profile: `quick`.
+- Active comparison profile: `full`.
 - Only `state_dim` changes across runs: `12`, `20`, `30`, `50`.
 - Environment dynamics, weekly interaction logic, action semantics, threshold ranges, reward definition, delayed reward logic, delayed outcomes, warm-up, terminal settlement, seeds, scenarios, bootstrap settings, metrics, controller set, and baseline set are held fixed.
 - The first 12 ordered features are unchanged baseline features in every state definition.
@@ -29,24 +29,24 @@ Best overall controller per dimension:
 
 | State dim | Best overall | Type | Expected profit | Cumulative reward |
 | --- | --- | --- | --- | --- |
-| 12 | profit_oriented | baseline | 76022.0850 | 88080.5950 |
-| 20 | profit_oriented | baseline | 76022.0850 | 88080.5950 |
-| 30 | profit_oriented | baseline | 76022.0850 | 88080.5950 |
-| 50 | profit_oriented | baseline | 76022.0850 | 88080.5950 |
+| 12 | constraint_aware_weekly | baseline | 3802547.1621 | 3666052.3089 |
+| 20 | constraint_aware_weekly | baseline | 3802547.1621 | 3666052.3089 |
+| 30 | constraint_aware_weekly | baseline | 3802547.1621 | 3666052.3089 |
+| 50 | constraint_aware_weekly | baseline | 3802547.1621 | 3666052.3089 |
 
 Best RL controller per dimension:
 
 | State dim | Best RL | Expected profit | NPV | Cumulative reward | Default rate | Approval rate | Capital usage | Stability index | Threshold volatility |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 12 | dqn | 59197.4700 | 57144.6094 | 67308.3592 | 0.1233 | 0.4159 | 0.4454 | 0.0001 | 0.0000 |
-| 20 | double_dqn | 61096.4396 | 58978.9759 | 69812.0186 | 0.1260 | 0.4329 | 0.4569 | 0.0001 | 0.0000 |
-| 30 | dqn | 66758.2865 | 64755.0731 | 78219.6900 | 0.1185 | 0.3527 | 0.3902 | 0.0001 | 0.0000 |
-| 50 | dqn | 66946.8121 | 64815.0538 | 78198.3921 | 0.1195 | 0.3935 | 0.4280 | 0.0001 | 0.0000 |
+| 12 | double_dqn | 3446563.8048 | 3368701.7509 | 3449744.7726 | 0.0756 | 0.8504 | 2.7985 | 0.0000 | 0.0000 |
+| 20 | double_dqn | 3124322.3565 | 3054838.0203 | 3281010.6980 | 0.0694 | 0.7371 | 2.4614 | 0.0000 | 0.0000 |
+| 30 | double_dqn | 3172604.5750 | 3101519.9658 | 3311518.6144 | 0.0725 | 0.7593 | 2.5207 | 0.0000 | 0.0000 |
+| 50 | double_dqn | 3034292.1784 | 2966721.3844 | 3196350.2248 | 0.0700 | 0.7224 | 2.4149 | 0.0000 | 0.4417 |
 
 ## 5. Main interpretation
 
-- Gains flatten by 30 to 50 dimensions.
-- Larger states add usable signal in this run: the best dimension improves profit without increasing default rate or threshold volatility.
+- Expected profit peaks at 12 dimensions and then weakens at higher dimensionality.
+- Larger states mostly add complexity in this run: added dimensions do not pay for themselves on profit-risk behavior.
 - In the current quick-profile outputs, the strongest overall controller is the same rule-based baseline across all four dimensions, while the best RL controller improves materially from 12D to 30D and then largely plateaus at 50D.
 
 ## 6. Figure map
@@ -80,13 +80,13 @@ Best RL controller per dimension:
 | First 12 features unchanged | PASS | Programmatic check passed on reset plus three fixed-action transitions. |
 | Controlled protocol consistency | PASS | Seeds, scenarios, reward settings, controller sets, and evaluation protocol match across dimensions. |
 | No future leakage in added features | PASS | ObservationBuilder reads only interactive history, last_week_metrics, interactive_week, and fixed config constants. |
-| Controller coverage for dim 12 | PASS | Every controller completed 72 evaluation runs. |
+| Controller coverage for dim 12 | PASS | Every controller completed 576 evaluation runs. |
 | Output files for dim 12 | PASS | Required CSVs and plots exist and are non-empty. |
-| Controller coverage for dim 20 | PASS | Every controller completed 72 evaluation runs. |
+| Controller coverage for dim 20 | PASS | Every controller completed 576 evaluation runs. |
 | Output files for dim 20 | PASS | Required CSVs and plots exist and are non-empty. |
-| Controller coverage for dim 30 | PASS | Every controller completed 72 evaluation runs. |
+| Controller coverage for dim 30 | PASS | Every controller completed 576 evaluation runs. |
 | Output files for dim 30 | PASS | Required CSVs and plots exist and are non-empty. |
-| Controller coverage for dim 50 | PASS | Every controller completed 72 evaluation runs. |
+| Controller coverage for dim 50 | PASS | Every controller completed 576 evaluation runs. |
 | Output files for dim 50 | PASS | Required CSVs and plots exist and are non-empty. |
 | Cross-dimension internal consistency | PASS | Best-row extracts match the global comparison summary. |
 | Run failures | PASS | No dimension run failed. |

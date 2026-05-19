@@ -6,7 +6,7 @@ Measure how observation dimensionality alone changes weekly threshold-controller
 
 ## 2. What was held constant
 
-- Active profile: `quick`.
+- Active profile: `full`.
 - Environment dynamics, weekly interaction logic, action semantics, threshold ranges, reward definition, delayed reward mechanism, delayed outcome mechanism, warm-up logic, terminal settlement logic, train/eval protocol, seeds, scenarios, bootstrap CI settings, controller set, and baseline set were held fixed across every run.
 - Selection rule for `best overall controller` and `best RL controller`: highest `cumulative_reward_mean`, then highest `expected_profit_mean`, then highest `stability_index_mean`, then lowest `default_rate_mean`.
 
@@ -30,38 +30,38 @@ Detailed one-line definitions, types, normalization flags, and incremental addit
 
 | State dim | Controller | Type | Expected profit | Cumulative reward |
 | --- | --- | --- | --- | --- |
-| 12 | profit_oriented | baseline | 76022.0850 | 88080.5950 |
-| 20 | profit_oriented | baseline | 76022.0850 | 88080.5950 |
-| 30 | profit_oriented | baseline | 76022.0850 | 88080.5950 |
-| 50 | profit_oriented | baseline | 76022.0850 | 88080.5950 |
+| 12 | constraint_aware_weekly | baseline | 3802547.1621 | 3666052.3089 |
+| 20 | constraint_aware_weekly | baseline | 3802547.1621 | 3666052.3089 |
+| 30 | constraint_aware_weekly | baseline | 3802547.1621 | 3666052.3089 |
+| 50 | constraint_aware_weekly | baseline | 3802547.1621 | 3666052.3089 |
 
 ## 6. Best RL controller for each dimension
 
 | State dim | Best RL | Expected profit | NPV | Cumulative reward | Default rate | Approval rate | Capital usage | Stability index | Threshold volatility |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 12 | dqn | 59197.4700 | 57144.6094 | 67308.3592 | 0.1233 | 0.4159 | 0.4454 | 0.0001 | 0.0000 |
-| 20 | double_dqn | 61096.4396 | 58978.9759 | 69812.0186 | 0.1260 | 0.4329 | 0.4569 | 0.0001 | 0.0000 |
-| 30 | dqn | 66758.2865 | 64755.0731 | 78219.6900 | 0.1185 | 0.3527 | 0.3902 | 0.0001 | 0.0000 |
-| 50 | dqn | 66946.8121 | 64815.0538 | 78198.3921 | 0.1195 | 0.3935 | 0.4280 | 0.0001 | 0.0000 |
+| 12 | double_dqn | 3446563.8048 | 3368701.7509 | 3449744.7726 | 0.0756 | 0.8504 | 2.7985 | 0.0000 | 0.0000 |
+| 20 | double_dqn | 3124322.3565 | 3054838.0203 | 3281010.6980 | 0.0694 | 0.7371 | 2.4614 | 0.0000 | 0.0000 |
+| 30 | double_dqn | 3172604.5750 | 3101519.9658 | 3311518.6144 | 0.0725 | 0.7593 | 2.5207 | 0.0000 | 0.0000 |
+| 50 | double_dqn | 3034292.1784 | 2966721.3844 | 3196350.2248 | 0.0700 | 0.7224 | 2.4149 | 0.0000 | 0.4417 |
 
 ## 7. Cross-dimension comparison
 
-- expected profit: 12->20: 1898.97, 20->30: 5661.85, 30->50: 188.53
-- NPV: 12->20: 1834.37, 20->30: 5776.10, 30->50: 59.98
-- cumulative reward: 12->20: 2503.66, 20->30: 8407.67, 30->50: -21.30
-- default rate: 12->20: 0.00, 20->30: -0.01, 30->50: 0.00
-- approval rate: 12->20: 0.02, 20->30: -0.08, 30->50: 0.04
-- capital usage: 12->20: 0.01, 20->30: -0.07, 30->50: 0.04
-- stability index: 12->20: -0.00, 20->30: 0.00, 30->50: -0.00
-- threshold volatility: 12->20: 0.00, 20->30: 0.00, 30->50: 0.00
+- expected profit: 12->20: -322241.45, 20->30: 48282.22, 30->50: -138312.40
+- NPV: 12->20: -313863.73, 20->30: 46681.95, 30->50: -134798.58
+- cumulative reward: 12->20: -168734.07, 20->30: 30507.92, 30->50: -115168.39
+- default rate: 12->20: -0.01, 20->30: 0.00, 30->50: -0.00
+- approval rate: 12->20: -0.11, 20->30: 0.02, 30->50: -0.04
+- capital usage: 12->20: -0.34, 20->30: 0.06, 30->50: -0.11
+- stability index: 12->20: 0.00, 20->30: -0.00, 30->50: 0.00
+- threshold volatility: 12->20: 0.00, 20->30: 0.00, 30->50: 0.44
 
 ## 8. Saturation assessment
 
-- Gains flatten by 30 to 50 dimensions.
+- Expected profit peaks at 12 dimensions and then weakens at higher dimensionality.
 
 ## 9. Signal vs complexity assessment
 
-- Larger states add usable signal in this run: the best dimension improves profit without increasing default rate or threshold volatility.
+- Larger states mostly add complexity in this run: added dimensions do not pay for themselves on profit-risk behavior.
 
 ## 10. Validity checks
 
@@ -70,13 +70,13 @@ Detailed one-line definitions, types, normalization flags, and incremental addit
 | First 12 features unchanged | PASS | Programmatic check passed on reset plus three fixed-action transitions. |
 | Controlled protocol consistency | PASS | Seeds, scenarios, reward settings, controller sets, and evaluation protocol match across dimensions. |
 | No future leakage in added features | PASS | ObservationBuilder reads only interactive history, last_week_metrics, interactive_week, and fixed config constants. |
-| Controller coverage for dim 12 | PASS | Every controller completed 72 evaluation runs. |
+| Controller coverage for dim 12 | PASS | Every controller completed 576 evaluation runs. |
 | Output files for dim 12 | PASS | Required CSVs and plots exist and are non-empty. |
-| Controller coverage for dim 20 | PASS | Every controller completed 72 evaluation runs. |
+| Controller coverage for dim 20 | PASS | Every controller completed 576 evaluation runs. |
 | Output files for dim 20 | PASS | Required CSVs and plots exist and are non-empty. |
-| Controller coverage for dim 30 | PASS | Every controller completed 72 evaluation runs. |
+| Controller coverage for dim 30 | PASS | Every controller completed 576 evaluation runs. |
 | Output files for dim 30 | PASS | Required CSVs and plots exist and are non-empty. |
-| Controller coverage for dim 50 | PASS | Every controller completed 72 evaluation runs. |
+| Controller coverage for dim 50 | PASS | Every controller completed 576 evaluation runs. |
 | Output files for dim 50 | PASS | Required CSVs and plots exist and are non-empty. |
 | Cross-dimension internal consistency | PASS | Best-row extracts match the global comparison summary. |
 | Run failures | PASS | No dimension run failed. |
@@ -84,6 +84,6 @@ Detailed one-line definitions, types, normalization flags, and incremental addit
 ## 11. Final conclusion
 
 - Successful dimensions: [12, 20, 30, 50].
-- Gains flatten by 30 to 50 dimensions.
-- Larger states add usable signal in this run: the best dimension improves profit without increasing default rate or threshold volatility.
+- Expected profit peaks at 12 dimensions and then weakens at higher dimensionality.
+- Larger states mostly add complexity in this run: added dimensions do not pay for themselves on profit-risk behavior.
 - Use the per-dimension folders under `outputs/` for the full CSV and plot set, and the cross-dimension files in `outputs/` for thesis-style comparison figures.

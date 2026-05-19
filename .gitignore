@@ -1,12 +1,18 @@
 # Local files 
 /.DS_Store
 /Documents
-/Запись встречи по ВКР — 20.10.2025
+/Запись встречи по ВКР
+/Запись встречи по ВКР*
 /Examples
-Plan diploma.*
-rl_credit_scoring_ai_agent_prompts_ru.md
+Plan diploma*
 Predefence*
 /Tex/out
+/Tex/main_ru*
+claude*
+CLAUDE*
+Claude*
+.claude*
+/out
 
 # IDE files
 /.vscode

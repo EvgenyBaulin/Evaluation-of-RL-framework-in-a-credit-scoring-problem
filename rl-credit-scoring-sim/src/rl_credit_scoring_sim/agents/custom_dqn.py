@@ -11,6 +11,8 @@ from torch import nn
 from torch.nn import functional as F
 
 from rl_credit_scoring_sim.agents.base import BaseController, TrainingLog
+from rl_credit_scoring_sim.utils.device_utils import detect_device
+from rl_credit_scoring_sim.utils.progress import TrainingProgress
 
 
 class ReplayBuffer:
@@ -61,7 +63,7 @@ class CustomDQNController(BaseController):
         self.double = double
         self.action_dim = action_dim
         self.obs_dim = obs_dim
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(self.config.get("device", detect_device()))
         self.online_net = QNetwork(obs_dim, action_dim, self.agent_cfg["hidden_sizes"]).to(self.device)
         self.target_net = QNetwork(obs_dim, action_dim, self.agent_cfg["hidden_sizes"]).to(self.device)
         self.target_net.load_state_dict(self.online_net.state_dict())
@@ -129,39 +131,49 @@ class CustomDQNController(BaseController):
         gradient_steps = self.agent_cfg["gradient_steps"]
         target_update_interval = self.agent_cfg["target_update_interval"]
 
-        for episode in range(training_episodes):
-            obs, info = env.reset(seed=seed + episode)
-            done = False
-            cumulative_reward = 0.0
-            while not done:
-                action = self._select_action(obs, deterministic=False, max_steps=max_steps)
-                next_obs, reward, terminated, truncated, info = env.step(action)
-                done = terminated or truncated
-                self.buffer.add((obs, action, reward, next_obs, done))
-                obs = next_obs
-                cumulative_reward += reward
-                self.total_steps += 1
+        state_dim = int(self.config["state_dim"]) if "state_dim" in self.config else 0
+        with TrainingProgress(
+            total_episodes=training_episodes,
+            controller=self.name,
+            dim=state_dim,
+            seed=seed,
+        ) as prog:
+            for episode in range(training_episodes):
+                obs, info = env.reset(seed=seed + episode)
+                done = False
+                cumulative_reward = 0.0
+                last_loss = 0.0
+                while not done:
+                    action = self._select_action(obs, deterministic=False, max_steps=max_steps)
+                    next_obs, reward, terminated, truncated, info = env.step(action)
+                    done = terminated or truncated
+                    self.buffer.add((obs, action, reward, next_obs, done))
+                    obs = next_obs
+                    cumulative_reward += reward
+                    self.total_steps += 1
 
-                if len(self.buffer) >= batch_size and self.total_steps >= learning_starts and self.total_steps % train_frequency == 0:
-                    for _ in range(gradient_steps):
-                        self._train_step(batch_size=batch_size, gamma=gamma)
+                    if len(self.buffer) >= batch_size and self.total_steps >= learning_starts and self.total_steps % train_frequency == 0:
+                        for _ in range(gradient_steps):
+                            self._train_step(batch_size=batch_size, gamma=gamma)
+                        last_loss = getattr(self, "last_loss", 0.0)
 
-                if self.total_steps % target_update_interval == 0:
-                    self.target_net.load_state_dict(self.online_net.state_dict())
+                    if self.total_steps % target_update_interval == 0:
+                        self.target_net.load_state_dict(self.online_net.state_dict())
 
-            log = TrainingLog(
-                agent_name=self.name,
-                seed=seed,
-                episode=episode,
-                cumulative_reward=float(cumulative_reward),
-                scenario_name=info["week_metrics"]["scenario_name"],
-                metadata={"total_steps": self.total_steps},
-            )
-            self.training_logs.append(asdict(log))
-            if (episode + 1) % checkpoint_frequency == 0:
-                self.save(checkpoint_dir / f"{self.name}_seed_{seed}_episode_{episode + 1}.pt")
-            if (episode + 1) % logging_frequency == 0:
-                pass
+                log = TrainingLog(
+                    agent_name=self.name,
+                    seed=seed,
+                    episode=episode,
+                    cumulative_reward=float(cumulative_reward),
+                    scenario_name=info["week_metrics"]["scenario_name"],
+                    metadata={"total_steps": self.total_steps},
+                )
+                self.training_logs.append(asdict(log))
+                prog.update(episode=episode, reward=cumulative_reward, loss=last_loss)
+                if (episode + 1) % checkpoint_frequency == 0:
+                    self.save(checkpoint_dir / f"{self.name}_seed_{seed}_episode_{episode + 1}.pt")
+                if (episode + 1) % logging_frequency == 0:
+                    pass
         self.target_net.load_state_dict(self.online_net.state_dict())
         return self.training_logs
 

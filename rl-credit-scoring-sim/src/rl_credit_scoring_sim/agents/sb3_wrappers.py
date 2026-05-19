@@ -3,10 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from stable_baselines3 import PPO, SAC
+from stable_baselines3 import A2C, PPO, SAC
 from stable_baselines3.common.callbacks import CheckpointCallback
 
 from rl_credit_scoring_sim.agents.base import BaseController
+from rl_credit_scoring_sim.utils.device_utils import detect_device
 
 
 class SB3Controller(BaseController):
@@ -27,17 +28,35 @@ class SB3Controller(BaseController):
         logging_frequency: int,
     ):
         total_timesteps = training_episodes * self.config["environment"]["horizon_weeks"]
+        raw_device = self.config.get("device", detect_device())
+        # A2C and PPO with MlpPolicy are faster on CPU; SAC benefits from GPU.
+        sb3_device = raw_device if self.algorithm_cls is SAC else "cpu"
         checkpoint_callback = CheckpointCallback(
             save_freq=max(1, checkpoint_frequency * self.config["environment"]["horizon_weeks"]),
             save_path=str(checkpoint_dir),
             name_prefix=f"{self.name}_seed_{seed}",
         )
-        if self.algorithm_cls is PPO:
+        if self.algorithm_cls is A2C:
+            self.model = A2C(
+                "MlpPolicy",
+                env,
+                verbose=0,
+                seed=seed,
+                device=sb3_device,
+                learning_rate=self.agent_cfg["learning_rate"],
+                n_steps=min(self.agent_cfg["n_steps"], total_timesteps),
+                gamma=self.agent_cfg["gamma"],
+                gae_lambda=self.agent_cfg["gae_lambda"],
+                ent_coef=self.agent_cfg["ent_coef"],
+                policy_kwargs=self.agent_cfg["policy_kwargs"],
+            )
+        elif self.algorithm_cls is PPO:
             self.model = PPO(
                 "MlpPolicy",
                 env,
                 verbose=0,
                 seed=seed,
+                device=sb3_device,
                 learning_rate=self.agent_cfg["learning_rate"],
                 n_steps=min(self.agent_cfg["n_steps"], total_timesteps),
                 batch_size=min(self.agent_cfg["batch_size"], max(8, total_timesteps)),
@@ -54,6 +73,7 @@ class SB3Controller(BaseController):
                 env,
                 verbose=0,
                 seed=seed,
+                device=sb3_device,
                 learning_rate=self.agent_cfg["learning_rate"],
                 buffer_size=self.agent_cfg["buffer_size"],
                 learning_starts=learning_starts,
