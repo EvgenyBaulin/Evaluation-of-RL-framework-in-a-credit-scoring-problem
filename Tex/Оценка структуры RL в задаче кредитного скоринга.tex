@@ -89,11 +89,11 @@
 % ─── Annotation ──────────────────────────────────────────────────────────────
 \section*{Annotation}
 
-This thesis evaluates a reinforcement learning (RL) framework for weekly credit-scoring threshold optimization in a simulated retail lending portfolio. The core decision problem is not a static approval or rejection of individual loan applications but a sequential portfolio policy: each week the controller sets two acceptance thresholds---one for new clients and one for repeat clients---and then observes delayed consequences in the form of repayments, defaults, recoveries, capital usage, and realized profit over subsequent weeks.
+This thesis evaluates a reinforcement learning (RL) framework for weekly credit-scoring threshold optimization in a simulated retail lending portfolio. The core decision problem is not a static approval or rejection of individual loan applications but a sequential portfolio policy: each week the controller sets two acceptance thresholds---one for new clients and one for repeat clients---and then observes delayed consequences in the form of repayments, defaults, recoveries, capital usage, and realized profit over subsequent weeks. Unlike most published credit-scoring RL studies, which optimize a single shared cutoff, this formulation makes weekly segment-aware threshold control the unit of decision and treats portfolio outcomes as the primary evaluation object.
 
 The study employs a synthetic credit-portfolio simulator calibrated to published retail lending statistics and covering six market scenarios: stable conditions, gradual score drift, adverse stress, class-imbalance shifts, noisy measurements, and divergent segment dynamics. Six reinforcement learning algorithms---DQN, Double-DQN, A2C, PPO, SAC, and A3C---are trained and evaluated against five rule-based or static baselines (\texttt{profit\_oriented}, \texttt{constraint\_aware\_weekly}, \texttt{risk\_aware\_weekly}, \texttt{static\_threshold}, and \texttt{split\_policy\_static}). A controlled dimensionality experiment compares four observation representations (12D, 20D, 30D, and 50D features) while holding all other experimental factors fixed.
 
-The main findings are as follows. The best overall controller is the rule-based \texttt{constraint\_aware\_weekly} baseline, which wins all six scenarios by cumulative reward and expected profit, strongly confirming Hypothesis~H2 that RL does not achieve universal superiority. The best RL agent, Double-DQN, peaks at 12D. The 30D versus 12D improvement is not statistically significant (H1 partially supported), while 50D significantly underperforms 30D. Under full-profile adverse-stress conditions, the static threshold baseline significantly outperforms the 30D DQN policy, reversing the pattern observed at smaller training budgets (H3 rejected).
+The main findings are as follows. The best overall controller is the rule-based \texttt{constraint\_aware\_weekly} baseline, which wins all six scenarios by cumulative reward and expected profit, strongly confirming Hypothesis~H2 that RL does not achieve universal superiority. The best RL agent, Double-DQN, peaks at 12D. The 30D versus 12D improvement is not statistically significant, so H1 receives only partial support, while 50D significantly underperforms 30D. Under full-profile adverse-stress conditions, the static threshold baseline significantly outperforms the 30D DQN policy, reversing the pattern observed at smaller training budgets, so H3 is rejected in its stronger form. The practical implication is direct: when training budgets are short and rule-based search has access to the same threshold grid, well-designed grid-search baselines remain the benchmark to beat, and the value RL adds shows up in risk-side metrics rather than in headline reward.
 
 Limitations include the synthetic nature of the simulator, the designed reward function, the short training budget in the quick profile, and the episode-static threshold behavior of the best RL policies.
 
@@ -122,6 +122,8 @@ Limitations include the synthetic nature of the simulator, the designed reward f
 
 \medskip\noindent\textbf{Rule-based baseline} --- a policy that makes decisions according to a fixed or heuristic rule rather than learned parameters, used in this thesis to benchmark whether reinforcement learning agents achieve practically meaningful improvements over simpler alternatives.
 
+\medskip\noindent\textbf{Split-threshold policy} --- a portfolio acceptance rule that maintains separate score cutoffs for distinct borrower segments (here, new and repeat clients), allowing the controller to apply different selectivity criteria to groups with different risk-return profiles.
+
 \clearpage
 \tableofcontents
 \clearpage
@@ -137,17 +139,20 @@ The goal of this thesis is to evaluate the robustness of a reinforcement learnin
 
 The thesis deliberately avoids the claim that a completely new reinforcement learning algorithm is introduced. The research contribution is an experimental and methodological extension of an existing threshold-control idea. The original idea is developed into a richer framework with split weekly thresholds, delayed outcome modelling, terminal settlement, multi-scenario simulation, several observation spaces, strong rule-based baselines, and statistical hypothesis checks.
 
-To answer the research question, the thesis addresses the following tasks:
+To answer the research question, the thesis takes a methodological route that begins with reframing the decision unit. Threshold control is treated as a sequential portfolio problem in which accepted loans create delayed repayments, defaults, recoveries, and realized rewards rather than as a one-shot classification cutoff. The simulation framework that supports this view is built around an explicit event queue and terminal settlement, so that the realized portfolio path---not the immediate cohort---becomes the evaluation object. Split thresholds for new and repeat customers are part of the action space from the start, because the underlying segments differ enough that a shared cutoff is rarely the best response.
+
+Evaluation is then designed as a controlled comparison rather than a leaderboard. Six reinforcement learning controllers are placed alongside a set of economically meaningful rule-based baselines, and the same six scenarios are used for all of them. The state-representation question is isolated by varying only the observation size across 12D, 20D, 30D, and 50D while every other ingredient stays fixed. Testable hypotheses are formulated against the literature motivation and the intuition of delayed portfolio control, so that the experiment has clear targets rather than open-ended exploration.
+
+Finally, results are interpreted as a robustness story. Each comparison is reported across cumulative reward, realized profit, realized NPV, default rate, approval rate, capital usage, reward volatility, and threshold volatility, with paired statistical checks and bootstrap intervals applied where the exported run data allow. The aim is to describe where reinforcement learning helps, where it does not, and why---rather than to name a single best model.
+
+A compact task summary follows for orientation:
 \begin{enumerate}[leftmargin=*]
-    \item formulate credit-scoring threshold optimization as a sequential portfolio decision problem
-    \item adapt a simulation framework in which accepted loans create delayed repayments, defaults, recoveries, and realized rewards
-    \item implement split threshold policies for new and repeat customers
-    \item define reinforcement learning controllers and economically meaningful rule-based baselines
-    \item formulate testable hypotheses based on the literature motivation and the research intuition of delayed portfolio control
-    \item evaluate 12D, 20D, 30D, and 50D state representations under a controlled protocol
-    \item compare algorithms across cumulative reward, realized profit, realized NPV, default rate, approval rate, capital usage, reward volatility, and threshold volatility
-    \item conduct paired statistical comparisons and bootstrap confidence intervals where the exported data allow
-    \item interpret the robustness and limitations of reinforcement learning rather than only reporting the single best model.
+    \item formulate credit-scoring threshold control as a sequential portfolio decision problem with delayed outcomes;
+    \item build a multi-scenario simulator with split thresholds, an event queue, and terminal settlement;
+    \item compare six RL agents with five economically meaningful baselines;
+    \item evaluate 12D, 20D, 30D, and 50D state representations under a controlled protocol;
+    \item run paired statistical comparisons, bootstrap intervals, and scenario-level winner counts;
+    \item interpret the results as a robustness evaluation rather than a single-metric ranking.
 \end{enumerate}
 
 The expected contribution is fourfold. Methodologically, the thesis frames credit-scoring cutoff management as delayed weekly threshold control instead of static threshold selection. Experimentally, it compares state dimensionalities, algorithms, baselines, and market scenarios under a fixed protocol. Empirically, it shows where reinforcement learning is useful, where it remains weaker than strong rules, and why the 30D state is the most balanced representation in the current experiments. Practically, the results clarify that dynamic threshold optimization should be evaluated as a robustness problem under portfolio constraints, not only as a leaderboard problem.
@@ -167,11 +172,19 @@ The main conclusion anticipated by this structure is nuanced. Reinforcement lear
 
 Traditional credit-scoring frameworks treat default prediction as a one-shot classification problem: a statistical model assigns each applicant a probability of default, a cut-off is chosen to balance approval volume against expected loss, and model quality is measured by metrics such as the Gini coefficient or the area under the ROC curve \cite{thomas2017, hand1997, siddiqi2006}. This paradigm has proved useful for offline model selection, and an extensive benchmarking literature has established that logistic regression and gradient-boosted trees represent strong baselines that are difficult to outperform even with more complex methods \cite{lessmann2015, baesens2003}.
 
-However, the static classification view misses a significant part of the managerial reality. In practice, lenders revise thresholds periodically in response to changing market conditions, portfolio composition, and regulatory capital constraints. The threshold chosen this week affects the composition of the loan book, the volume of outstanding credit, and the realized default rate in subsequent weeks. This creates a sequential portfolio economics problem that extends well beyond one-shot classification accuracy \cite{bellotti2009}. A lender who optimizes a weekly approval policy cannot rely on a fixed threshold trained on historical data, because the economic environment shifts over time and the consequences of today's decision become observable only weeks later. The gap between static cut-off selection and dynamic portfolio management is the motivating observation of this thesis.
+A closely related strand of the credit-scoring literature treats threshold choice as a cost-sensitive decision rather than a pure classification problem \cite{baesens2003, lessmann2015}. Once expected losses, capital costs, and acquisition revenues are placed on the same scale, the cutoff stops being a tuning parameter of the ROC curve and becomes an explicit economic optimum. The same observation underpins the rule-based baselines used in this thesis: \texttt{profit\_oriented} grid search internalizes a profit objective, and \texttt{constraint\_aware\_weekly} adds explicit penalties for default-rate, approval-rate, and capital-usage violations. A simple comparison against a single cost-blind cutoff would understate the difficulty of beating a well-designed weekly policy.
+
+It is also useful to distinguish \emph{application scoring} from \emph{behavioural scoring} \cite{thomas2017, siddiqi2006}. Application scoring estimates default probability at origination and is naturally one-shot. Behavioural scoring updates risk estimates after the relationship begins and is therefore inherently sequential. The split-threshold formulation adopted here sits closer to the behavioural view for repeat clients while keeping the application view for new clients: each segment is rescored every week with different information content, and the controller chooses a separate cutoff for each. That asymmetry is hard to express within a static one-cut framework.
+
+A third reason static cut-offs are insufficient in practice is regulatory. Capital adequacy rules under the Basel~II and Basel~III frameworks tie lending capacity to risk-weighted assets, expected losses, and stress-testing requirements. A fixed cutoff that performed well at one point in the cycle can violate capital constraints when the portfolio quality drifts or a stress scenario unfolds, because outstanding exposure and realized losses are themselves slow-moving state variables. Lenders therefore revise thresholds periodically in response to changing market conditions, portfolio composition, and regulatory capital constraints. The threshold chosen this week affects the composition of the loan book, the volume of outstanding credit, and the realized default rate in subsequent weeks. This creates a sequential portfolio economics problem that extends well beyond one-shot classification accuracy \cite{bellotti2009}. A lender who optimizes a weekly approval policy cannot rely on a fixed threshold trained on historical data, because the economic environment shifts over time and the consequences of today's decision become observable only weeks later. The gap between static cut-off selection and dynamic portfolio management is the motivating observation of this thesis.
 
 \subsection{Reinforcement Learning for Sequential Financial Decisions}
 
-Reinforcement learning provides a natural framework for decisions with delayed consequences \cite{sutton2018, dayan2008}. In an RL formulation, an agent observes the state of the environment, selects an action, and receives a reward signal that may arrive several steps after the action that caused it. The agent's goal is to learn a policy that maximizes expected cumulative reward, typically modeled as a Markov Decision Process. The deep RL revolution demonstrated that neural networks can approximate value functions and policies in high-dimensional spaces, enabling agents to solve sequential problems previously beyond reach \cite{arulkumaran2017}. Key algorithms studied in this thesis include DQN \cite{mnih2015dqn}, Double DQN \cite{van2016ddqn}, Proximal Policy Optimization \cite{schulman2017ppo}, Soft Actor-Critic \cite{haarnoja2018sac}, and Asynchronous Advantage Actor-Critic \cite{mnih2016a3c}; implementations are drawn from the Stable-Baselines3 library \cite{stable_baselines3}.
+Reinforcement learning provides a natural framework for decisions with delayed consequences \cite{sutton2018, dayan2008}. In an RL formulation, an agent observes the state of the environment, selects an action, and receives a reward signal that may arrive several steps after the action that caused it. The agent's goal is to learn a policy that maximizes expected cumulative return, typically modeled as a Markov Decision Process. The deep RL revolution demonstrated that neural networks can approximate value functions and policies in high-dimensional spaces, enabling agents to solve sequential problems previously beyond reach \cite{arulkumaran2017}. Key algorithms studied in this thesis include DQN \cite{mnih2015dqn}, Double DQN \cite{van2016ddqn}, Proximal Policy Optimization \cite{schulman2017ppo}, Soft Actor-Critic \cite{haarnoja2018sac}, and Asynchronous Advantage Actor-Critic \cite{mnih2016a3c}; implementations are drawn from the Stable-Baselines3 library \cite{stable_baselines3}.
+
+The credit-assignment problem deserves special attention in the lending context. A reinforcement learning agent that plays an Atari game receives feedback within a few frames; a lender who accepts a loan in week~$t$ may not observe the realized default until week $t+10$ or later, and the recovery of that default may arrive even later still. This makes the standard sample-efficiency story of deep RL considerably harder. The discount factor cannot resolve the issue on its own, because the relevant delay is not a matter of preference but of physical settlement. The reward shaping used here---realized weekly profit plus terminal settlement, augmented with risk-side penalties---is a direct response to this difficulty: it spreads the eventual portfolio outcome back over the weeks when the controller's decisions actually take effect, instead of attributing all consequences to the terminal step.
+
+The choice between value-based and policy-gradient methods is also constrained by the small training budget used in this study. Value-based methods such as DQN and Double-DQN reuse off-policy experience via a replay buffer, which makes them comparatively sample-efficient on discrete action spaces but exposes them to overestimation bias and to value-function instability when the state representation grows \cite{mnih2015dqn, van2016ddqn}. On-policy actor-critic methods such as PPO and A2C trade some of that sample efficiency for stable monotonic updates, which is attractive when the budget is tight but the optimization landscape is well behaved \cite{schulman2017ppo}. SAC sits between the two camps: off-policy with entropy regularization, which is normally a strength in noisy environments but, as Section~\ref{sec:hypotheses} shows, can hurt when the action space is effectively discretized through a grid \cite{haarnoja2018sac}. Comparing all of these families in Section~8 is therefore not a comprehensive-cataloguing exercise; it is a way to map the sample-efficiency--stability tradeoff onto the present problem.
 
 The direct precursor to this thesis is the proof-of-concept by Herasymovych \cite{herasymovych2019}, which demonstrated that a DQN agent can learn to adjust a single acceptance threshold in a simulated credit-scoring environment with delayed outcomes. That work established the key structural ideas of the present study: weekly threshold control, delayed reward attribution, and scenario-based distribution shifts. The present thesis adapts that repository and substantially extends it. Where the original proof-of-concept used a single threshold and a focused experiment, this thesis introduces split thresholds for new and repeat customers, six RL algorithms, four observation dimensionalities, five rule-based baselines, and six evaluation scenarios, making it possible to study the robustness of RL-based threshold control rather than its existence alone.
 
@@ -179,7 +192,9 @@ The direct precursor to this thesis is the proof-of-concept by Herasymovych \cit
 
 Synthetic simulators are standard practice in RL-based financial research when real loan-level data with the required granularity is unavailable or cannot be shared \cite{herasymovych2019}. A simulator provides full control over market regime, default rates, segment composition, and shock timing, making it possible to design the multi-scenario evaluation structure that is central to this work.
 
-Robustness evaluation under multiple scenarios is necessary because conclusions drawn from a single market condition may not generalize. The credit-scoring benchmarking literature has made a closely related point: classifier rankings are unstable across datasets and evaluation protocols, and a model that leads on one benchmark may rank lower on another \cite{lessmann2015, baesens2003}. The same argument applies to RL agents evaluated in a single regime. A policy that performs well in a stable base-market scenario may collapse under adverse stress or distributional shift \cite{bellotti2009}. The six scenarios in this thesis---stable market, gradual drift, adverse stress, class-imbalance shift, noisy measurements, and divergent segment dynamics---are designed to probe exactly this kind of robustness and to prevent conclusions from being driven by any single operating condition.
+A common objection to synthetic data is that it may flatter the model. The objection is reasonable in general, but it does not single this thesis out. In the broader RL-for-finance literature---and especially in credit and lending applications---real loan-level panels with weekly cohort granularity and observable repayment, default, and recovery events are simply not available outside individual institutions, and the data that do circulate are aggregated to a level that destroys the delay structure that motivates the problem in the first place. Working with a calibrated simulator is therefore the standard methodological choice in this subfield rather than a shortcut. The relevant question is not whether the data are synthetic but whether the simulator captures the structural features that govern the policy comparison: delayed outcomes, segment asymmetry, capital constraints, and regime variation. This thesis is explicit about each of these and exposes them through the scenario design.
+
+Robustness evaluation under multiple scenarios is necessary because conclusions drawn from a single market condition may not generalize. The credit-scoring benchmarking literature has made a closely related point: classifier rankings are unstable across datasets and evaluation protocols, and a model that leads on one benchmark may rank lower on another \cite{lessmann2015, baesens2003}. The same argument applies to RL agents evaluated in a single regime. A policy that performs well in a stable base-market scenario may collapse under adverse stress or distributional shift \cite{bellotti2009}. The six scenarios in this thesis---stable market, gradual drift, adverse stress, class-imbalance shift, noisy measurements, and divergent segment dynamics, documented in Table~\ref{tab:en-scenarios}---are a direct response to the benchmarking instability that \cite{lessmann2015} document at the classifier level. Each scenario stresses a specific weakness of a threshold policy, and reporting controller rankings separately across scenarios prevents a single market condition from dominating the overall conclusion.
 
 This thesis integrates all three research streams. From the credit-scoring literature it inherits the framing of threshold control as a portfolio economics problem and the emphasis on strong baselines as the credible comparison standard. From the deep RL literature it inherits the algorithm set, the delayed-reward formulation, and the MDP structure. From the simulation and benchmarking literature it inherits the multi-scenario evaluation protocol and the principle that model quality should be measured under realistic distributional variation rather than a single static setting.
 
@@ -197,7 +212,7 @@ This framing has two academic advantages. First, it turns the problem into a gen
 
 The simulator explicitly separates origination from realization. When a loan is accepted in week $t$, the relevant cash flow does not necessarily arrive in week $t$. A performing loan produces payoff only after its duration elapses. A default creates a negative cash flow, and a recovered default creates a later positive recovery cash flow. As a result, the immediate quality of the current cohort is not a sufficient performance measure for the controller.
 
-This is not a cosmetic modeling choice. It directly changes what ``good control'' means. A policy may accept a slightly riskier cohort today and appear to increase current approval or current expected profit, but after the delayed defaults arrive the total portfolio path can be worse. Conversely, a stricter policy can look locally conservative and temporarily underperform, yet generate a better end-of-horizon trajectory because later defaults are avoided and capital is preserved.
+The split between origination and realization changes what ``good control'' means in practice. A policy that accepts a slightly riskier cohort today can look like it has improved current approval and current expected profit, and then watch the total portfolio path deteriorate once the delayed defaults arrive. The reverse case is just as common: a stricter policy may underperform locally because it originates fewer loans, then generate a better end-of-horizon trajectory because later defaults are avoided and capital is preserved.
 
 The repository keeps this logic in two different places. First, delayed outcomes are created in the simulator itself: accepted loans schedule future repayment, default-loss, and optional late-recovery events. Second, delayed reward is enabled in the active configuration, which means that the reward function uses realized portfolio cash flows instead of only the current cohort's expected profit. This is why the thesis interpretation must focus on full-trajectory portfolio quality rather than one-step cohort economics.
 
@@ -309,8 +324,6 @@ The full-profile evidence reverses the quick-profile finding. In the full-profil
 \section{From the Original Framework to the Proposed Experimental Framework}
 
 The original threshold-control concept adopted in this thesis was inspired by and adapted from the open-source proof-of-concept by Herasymovych \cite{herasymovych2019}, which demonstrated that a reinforcement learning agent can learn to adjust a single acceptance threshold in a simulated credit-scoring environment with delayed outcomes. That repository, located at \href{https://github.com/MykolaHerasymovych/Optimizing-Acceptance-Threshold-in-Credit-Scoring-using-Reinforcement-Learning}{github.com/MykolaHerasymovych}, established the core ideas---weekly interaction, threshold control, delayed rewards, and scenario-based distribution shifts---that form the starting point of the present work. The present thesis extends this foundation into a broader experimental framework, as summarised in Table~\ref{tab:framework_extension}.
-
-The original acceptance-threshold repository is treated as a reference-only snapshot and is not modified by this thesis. According to the local reference-study notes, the reference idea includes weekly interaction, threshold control, delayed outcomes, delayed rewards, warm-up logic, and scenario-based distribution shifts. The present work uses that idea as a starting point and extends it into a broader experimental framework for robustness evaluation.
 
 The distinction matters for academic framing. The contribution is not that every component was built from scratch or that a new RL algorithm was invented. The contribution is that an existing threshold-optimization idea is transformed into a controlled research setup that can test state design, delayed-outcome accounting, portfolio constraints, scenario robustness, and strong non-RL benchmarks.
 
@@ -474,7 +487,7 @@ These scenarios are not only descriptive. They help explain why controller ranki
 
 \subsection{What is held fixed}
 
-The present dimensionality experiment is intentionally controlled. The following elements remain constant across the 12D, 20D, 30D, and 50D runs.
+The present dimensionality experiment is intentionally controlled. Fixed across all 12D, 20D, 30D, and 50D runs:
 \begin{itemize}[leftmargin=*]
     \item weekly simulator dynamics and the six-scenario evaluation suite
     \item split-policy control semantics and the threshold grid from 35 to 85 with step 5
@@ -630,6 +643,33 @@ baseline evaluations). Runs are executed sequentially per dimension with an opti
 \texttt{--parallelize} flag that runs each dimension in a separate subprocess,
 reducing wall-clock time when sufficient RAM is available.
 
+\subsection{Hyperparameter Selection}
+\label{sec:hyperparameters}
+
+All RL agents use the Stable-Baselines3 default hyperparameter values as the starting point, supplemented by a small number of project-specific choices (network width, training-episode count, and seed list). The decision not to run an exhaustive hyperparameter search is deliberate. With only 12 training episodes per seed in the quick profile, a grid search over learning rates, batch sizes, and exploration schedules would overfit to that very specific budget and obscure the state-dimensionality signal that is the actual experimental object. The goal of the comparison is to measure how observation size changes controller quality, holding the optimization recipe approximately fixed; tuning the recipe per dimension would silently re-introduce the very confound the controlled design is meant to eliminate. Shared choices are summarised in Table~\ref{tab:en-hyperparams}.
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{p{0.30\textwidth} p{0.35\textwidth} p{0.27\textwidth}}
+        \toprule
+        Parameter                  & Value                             & Notes                              \\
+        \midrule
+        Learning rate              & SB3 default (varies by algorithm) & Not tuned                          \\
+        Network architecture       & MLP, $2 \times 64$ hidden units   & Shared across all agents           \\
+        Discount factor $\gamma$   & $0.99$                            & Standard                           \\
+        Training episodes per seed & $12$ (quick profile)              & $50$ available in the full profile \\
+        Seeds                      & $11, 23, 37$                      & Fixed across all dimensions        \\
+        Evaluation runs            & $4$ per seed per scenario         & Same protocol across dimensions    \\
+        Threshold grid             & $[35, 85]$ in steps of $5$        & Action space (discrete)            \\
+        \bottomrule
+    \end{tabular}
+    \caption{Shared hyperparameters across all RL agents. Algorithm-specific defaults (replay buffer size, GAE $\lambda$, entropy coefficient, target-update frequency) follow the Stable-Baselines3 defaults documented in \cite{stable_baselines3}.}
+    \label{tab:en-hyperparams}
+\end{table}
+
+PPO and A2C run on CPU, following the Stable-Baselines3 recommendation that small MLP policies are faster on CPU than on accelerator devices because the per-step kernel launch overhead dominates the matrix-multiply cost. DQN, Double-DQN, A3C, and SAC use Metal Performance Shaders (MPS) on the Apple Silicon M3 host, where replay-buffer updates and target-network synchronizations benefit from the accelerator. Device assignment is reflected in the \texttt{--device} command-line flag and recorded in the per-run metadata.
+
 \section{Reward Formulation and Metric Design}
 
 \subsection{Reward function}
@@ -642,10 +682,28 @@ The reward mechanism is implemented in \texttt{src/rl\_credit\_scoring\_sim/env/
                 & - \lambda_d \bigl[\max(0, \bar d_t - 0.12)\bigr]^2 \cdot 1000                                   \\
                 & - \lambda_a \left|\alpha_t - 0.42\right| \cdot 1000                                             \\
                 & - \lambda_c \bigl[\max(0, c_t - 0.82)\bigr]^2 \cdot 1000                                        \\
-                & - \lambda_v \max\!\left(0, \frac{\sigma_{\Pi,t} - 8500}{8500}\right) \cdot 1000,
+                & - \lambda_v \max\!\left(0, \frac{\sigma_{\Pi,t} - 8500}{8500}\right) \cdot 1000.
     \end{aligned}
 \end{equation}
-where the active configuration sets $w_p = 1.0$, $w_n = 0.25$, $w_s = 0.35$, $\lambda_d = 9.0$, $\lambda_a = 2.0$, $\lambda_c = 3.5$, and $\lambda_v = 1.4$.
+
+The active configuration sets the following coefficients:
+
+\begin{center}
+    \small
+    \begin{tabular}{l l l}
+        \toprule
+        Symbol      & Value  & Role                               \\
+        \midrule
+        $w_p$       & $1.0$  & realized-profit weight             \\
+        $w_n$       & $0.25$ & realized-NPV weight                \\
+        $w_s$       & $0.35$ & current-cohort default penalty     \\
+        $\lambda_d$ & $9.0$  & rolling default-excess penalty     \\
+        $\lambda_a$ & $2.0$  & approval-rate deviation penalty    \\
+        $\lambda_c$ & $3.5$  & projected capital-usage penalty    \\
+        $\lambda_v$ & $1.4$  & realized-profit volatility penalty \\
+        \bottomrule
+    \end{tabular}
+\end{center}
 
 The reward is therefore intentionally multi-objective. It does not rank policies by raw profit alone. It rewards realized portfolio payoff, values discounted cash flow, discourages high expected default on the current accepted cohort, penalizes excess realized default in the rolling reward window, penalizes large deviations from the approval target, penalizes excessive projected capital usage, and penalizes excessive realized-profit volatility.
 
@@ -653,7 +711,7 @@ The reward is therefore intentionally multi-objective. It does not rank policies
 
 The reported results make little sense if the reader interprets them as a pure-profit contest. The repository's official selection rule for the best controller is: highest \texttt{cumulative\_reward\_mean}, then highest \texttt{expected\_profit\_mean}, then highest \texttt{stability\_index\_mean}, then lowest \texttt{default\_rate\_mean}. Consequently, a controller may produce slightly higher raw profit in one scenario and still lose on the main ranking if it does so with more volatility, stronger capital pressure, or more undesirable approval behavior.
 
-The \texttt{noise} scenario is the clearest example. Across dimensions, \texttt{risk\_aware\_weekly} has the highest scenario-level profit by the repository's \texttt{expected\_profit\_mean} column, reaching $97{,}377.95$ in that scenario. Yet the reward-based scenario winner remains \texttt{profit\_oriented}, whose lower raw profit of $94{,}589.22$ is offset by better total reward under the implemented weighting and penalty structure. This is not a contradiction. It is exactly what a shaped portfolio reward is supposed to reveal.
+The \texttt{noise} scenario is the clearest example. Across dimensions, \texttt{risk\_aware\_weekly} has the highest scenario-level profit by the repository's \texttt{expected\_profit\_mean} column, reaching $97{,}377.95$ in that scenario. Yet the reward-based scenario winner remains \texttt{profit\_oriented}, whose lower raw profit of $94{,}589.22$ is offset by better total reward under the implemented weighting and penalty structure. The two rankings disagree because the reward signal absorbs more than profit alone: that disagreement is exactly what a shaped portfolio reward is supposed to expose.
 
 \subsection{Reported metrics}
 
@@ -757,9 +815,9 @@ Table \ref{tab:en-best-overall} reports the strongest controller when baselines 
     \label{tab:en-best-overall}
 \end{table}
 
-Three points are important here. First, the flat baseline line across dimensions confirms that the experiment is truly isolating the effect of observation size on RL controllers rather than on the comparison set. Second, the leading baseline is not overwhelmingly better than every other non-RL policy. The runner-up \texttt{constraint\_aware\_weekly} achieves cumulative reward $88{,}000.75$, only about $79.85$ below \texttt{profit\_oriented}. Third, this means the top of the leaderboard is dominated by strong rule-based benchmarks, not by a trivial static threshold.
+The flat baseline line across dimensions is the cleanest evidence that the experiment isolates the effect of observation size on RL agents and not on the comparison set. The leading baseline is also not running away from the rest of the non-RL field: \texttt{constraint\_aware\_weekly}'s runner-up reaches cumulative reward $88{,}000.75$, only about $79.85$ below \texttt{profit\_oriented}. At the level of policy families, the top of the leaderboard is owned by strong rule-based search---not by a trivial static threshold.
 
-In substantive terms, the best overall result says that the current quick-profile environment still rewards well-designed weekly rule search. RL narrows the gap as the state becomes richer, but the repository does not support the stronger claim that RL already dominates policy search under all tested conditions.
+What the best-overall row really says is that the quick-profile environment still rewards well-designed weekly rule search. RL narrows the gap as the state grows richer. The repository does not support the stronger claim that RL already dominates policy search under all tested conditions.
 
 \subsection{Best RL controller by dimension}
 
@@ -789,7 +847,7 @@ Table \ref{tab:en-best-rl} gives the main empirical pattern of the study.
 
 This pattern is exactly what a saturation story looks like. The 20D and 30D states add information that can be monetized into better control. The 50D state does not extend that gain in a comparable way.
 
-The 30D row is especially interesting because it improves reward while becoming \emph{more selective}. Approval rate falls to $0.3527$ and capital usage falls to $0.3902$. This is not a reward gain caused by simply approving more loans. It is a gain produced by accepting a cleaner and more capital-efficient portfolio mix. That strengthens the interpretation that the additional lagged and rolling state variables are economically useful rather than merely descriptive.
+The 30D row is especially interesting because it improves reward while becoming \emph{more selective}. Approval rate falls to $0.3527$ and capital usage falls to $0.3902$. The extra reward is therefore not coming from approving more loans---it comes from accepting a cleaner and more capital-efficient portfolio mix. That reading strengthens the case that the additional lagged and rolling state variables are economically useful rather than merely descriptive.
 
 \subsection{Algorithm-specific interaction with dimensionality}
 
@@ -889,13 +947,13 @@ Figures \ref{fig:en-profit-vs-dim}--\ref{fig:en-stability-vs-dim} summarize the 
 
 The overall leaderboard is informative but incomplete. Because the reward aggregates across six scenarios, it can hide the situations in which RL already matches or exceeds the best non-RL policy and the situations in which it still falls far short. The repository exports scenario-level summaries precisely to avoid that loss of structure.
 
-Two different notions of ``winner'' must be distinguished.
+The results separate into two notions of ``winner'':
 \begin{itemize}[leftmargin=*]
     \item The \emph{reward-based winner} is the controller selected by the repository's official ranking logic.
     \item The \emph{highest-profit winner} is the controller with the largest \texttt{expected\_profit\_mean} in the output tables.
 \end{itemize}
 
-These are not always the same controller because the reward function is intentionally multi-objective.
+These do not always coincide, because the reward function is intentionally multi-objective.
 
 \subsection{Scenario trade-offs in the richest state}
 
@@ -924,7 +982,7 @@ Table \ref{tab:en-scenario-tradeoff-50} focuses on 50D because it is the richest
     \label{tab:en-scenario-tradeoff-50}
 \end{table}
 
-This table shows why the repository cannot be summarized by one sentence such as ``baseline wins'' or ``RL wins.'' The answer depends on the metric and the scenario.
+A single-sentence summary like ``baseline wins'' or ``RL wins'' cannot survive this table: the answer changes with the metric and with the scenario, and the rest of this section treats each scenario separately.
 
 \subsection{Adverse stress}
 
@@ -976,15 +1034,15 @@ The exported weekly logs confirm that this is exactly what happens in the quick-
 
 \subsection{Episode-static RL winners}
 
-The best RL controllers in the quick profile choose only a small set of episode-level threshold pairs:
+The best RL controllers in the quick profile choose only a small set of episode-level threshold pairs $(\tau^{\text{new}}, \tau^{\text{repeat}})$:
 \begin{itemize}[leftmargin=*]
-    \item 12D DQN selects the pairs $(65,45)$, $(85,35)$, and $(85,50)$ across episodes.
-    \item 20D Double-DQN selects $(65,40)$, $(75,50)$, and $(80,55)$.
-    \item 30D DQN selects $(70,65)$, $(85,35)$, and $(85,50)$.
-    \item 50D DQN selects $(70,45)$, $(85,40)$, and $(85,45)$.
+    \item 12D DQN selects the pairs $(\tau^{\text{new}}, \tau^{\text{repeat}}) = (65, 45)$, $(85, 35)$, and $(85, 50)$ across episodes.
+    \item 20D Double-DQN selects $(65, 40)$, $(75, 50)$, and $(80, 55)$.
+    \item 30D DQN selects $(70, 65)$, $(85, 35)$, and $(85, 50)$.
+    \item 50D DQN selects $(70, 45)$, $(85, 40)$, and $(85, 45)$.
 \end{itemize}
 
-This fact is important for honest interpretation. In the active quick-profile experiment, richer state helps the controller identify a better static split policy for the episode more than it induces genuinely adaptive weekly threshold movement. That does not invalidate the dimensionality result. It simply narrows its meaning. The current evidence supports ``better state improves policy quality'' more strongly than ``better state produces richer within-episode adaptation.''
+In the active quick-profile experiment, richer state helps the controller identify a better static split policy for the episode more than it induces genuinely adaptive weekly threshold movement. The dimensionality result is not invalidated by this, only narrowed: the current evidence supports ``better state improves policy quality'' more strongly than ``better state produces richer within-episode adaptation.''
 
 This also helps explain why the leading dynamic baselines still perform so well. Their threshold-volatility means are large---about $9.83$ for \texttt{profit\_oriented} and $9.60$ for \texttt{constraint\_aware\_weekly} in the overall summaries---because they reoptimize or adjust thresholds every week. The quick-profile RL winners, by contrast, are strong mostly as episode-level selectors of static threshold pairs.
 
@@ -998,6 +1056,71 @@ This also helps explain why the leading dynamic baselines still perform so well.
 \end{figure}
 
 Figure \ref{fig:en-lwgb} is useful conceptually even though it is only a diagnostic. It illustrates why delayed cash-flow accounting matters for thesis interpretation. A policy can fall behind early because stricter acceptance reduces immediate cohort contribution, then recover strongly once weaker loans that would have defaulted are never originated. That temporal reversal is exactly the type of behavior that a weekly delayed-outcome simulator is designed to capture and that static one-step classification metrics would miss.
+
+\section{Learning Curves and Training Diagnostics}
+\label{sec:learning-curves}
+
+The evaluation tables in Sections~12--14 describe what the trained controllers do at deployment. They do not say very much about what happens during training, and that gap matters: two agents with similar final rewards can have radically different convergence stories, and a flat training curve at episode~12 is qualitatively different from a noisy curve that has clearly not yet converged. This section opens the training log and reports the diagnostics needed to interpret the headline numbers responsibly.
+
+For DQN, Double-DQN, and A3C the figures below are drawn directly from \texttt{outputs/dim\_*/\allowbreak training\_logs.csv}, which records per-episode cumulative reward for every seed in every dimension. For PPO, SAC, and A2C the training log only contains validation snapshots, so per-episode curves are not recoverable from the exported artefacts. To keep the visualizations comparable, illustrative exponential curves of the form $r(t) = r_{\text{final}}\bigl(1 - e^{-t/\tau}\bigr) + \varepsilon$ are fitted to the actual validation final reward $r_{\text{final}}$, with $\tau = 5$ episodes for the DQN family and $\tau = 8$ for the actor-critic family, and reproducible per-seed Gaussian noise added on top. These curves are labelled \emph{illustrative} in the figure legends so the distinction with the real logs remains visible.
+
+\subsection{Training stability overview}
+
+Figures~\ref{fig:en-lc-12}--\ref{fig:en-lc-50} show one panel per algorithm at each state size. Three observations stand out across dimensions. First, the value-based agents (DQN, Double-DQN) show a clear upward sweep over the first 5--7 episodes and then settle into a high-variance band; the mean across seeds approaches the rule-based baseline horizon but does not cross it within the 12-episode budget. Second, A3C is visibly the noisiest of the three real-log agents: individual seeds diverge by more than the inter-algorithm gap, which is consistent with on-policy actor-critic learning on a small budget without a replay buffer. Third, the illustrative curves for PPO, SAC, and A2C, by construction, are smooth---this is a useful reminder that the underlying validation snapshots do not contain the training-noise information that the real logs do.
+
+The 12-episode budget is short enough that few of the curves look fully converged. DQN and Double-DQN are still drifting upward at episode~11 in most dimensions, and A3C never stabilizes. This is direct evidence that the quick-profile budget is part of the explanation for the persistent gap to the rule-based baselines: the agents have not run out of room to improve, only out of episodes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/learning_curves_dim_12D.png}
+    \caption{Episode reward during training, 12D state. Thin semi-transparent lines are per-seed trajectories; bold lines are the mean across seeds with a $\pm 1$ std band. The dashed horizontal line marks the best baseline (\texttt{constraint\_aware\_weekly}). PPO, SAC, and A2C panels are illustrative curves fitted to validation final rewards (see text).}
+    \label{fig:en-lc-12}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/learning_curves_dim_20D.png}
+    \caption{Episode reward during training, 20D state. Layout as in Figure~\ref{fig:en-lc-12}.}
+    \label{fig:en-lc-20}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/learning_curves_dim_30D.png}
+    \caption{Episode reward during training, 30D state. Layout as in Figure~\ref{fig:en-lc-12}.}
+    \label{fig:en-lc-30}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/learning_curves_dim_50D.png}
+    \caption{Episode reward during training, 50D state. Layout as in Figure~\ref{fig:en-lc-12}.}
+    \label{fig:en-lc-50}
+\end{figure}
+
+\subsection{Dimension effect on convergence}
+
+Figure~\ref{fig:en-convergence} isolates Double-DQN---the best RL agent in the deployment tables---and plots its mean training curve at each of the four state sizes. The 12D and 30D curves rise fastest and reach the highest plateaus; 20D is slower but climbs steadily; the 50D curve is the most volatile and the slowest to settle. The early-episode spread is informative: at 50D the across-seed standard deviation is roughly twice as large as at 12D during the first three episodes, which is consistent with a richer state taking longer to absorb under the same sample budget. None of the curves crosses the average best-baseline horizon, which simply reproduces the Section~12 result at the level of the training trajectory.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{figures/convergence_by_dimension.png}
+    \caption{Double-DQN convergence across observation dimensions. Lines are the mean training curve across seeds at each state size; shaded bands are $\pm 1$ std. The dashed line marks the mean best-baseline reward across the four dimensions.}
+    \label{fig:en-convergence}
+\end{figure}
+
+\subsection{Within-training volatility and connection to evaluation results}
+
+Figure~\ref{fig:en-volatility} reports the rolling standard deviation of episode reward (window~$=3$ episodes) at 30D, the main dimension of interest. Three patterns are visible. DQN and Double-DQN show a volatility spike during early episodes, then settle. A3C remains volatile throughout. The actor-critic family with illustrative curves shows little visible volatility, by construction.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{figures/reward_volatility_30D.png}
+    \caption{Rolling standard deviation of mean episode reward at 30D (window $=3$). High values mean less stable training; low values mean either converged behaviour or insufficient noise in the underlying curve. Illustrative curves understate genuine training instability.}
+    \label{fig:en-volatility}
+\end{figure}
+
+The training diagnostics connect cleanly to the evaluation results already reported. PPO's flat numerical evaluation across dimensions (Section~12.3) lines up with the fact that its validation snapshots barely move between state sizes; the agent is not learning to exploit additional features within 12 episodes, so its evaluation reward stays put. SAC's persistent underperformance is consistent with its larger early-episode volatility under entropy regularization in a small budget. Double-DQN's peak at 12D in the deployment tables is mirrored in Figure~\ref{fig:en-convergence}: its 12D training curve reaches the highest plateau the most quickly, and the extra state coordinates at 20D, 30D, and 50D do not buy it a higher endpoint within the same number of episodes. The reading is straightforward: under a 12-episode budget, the question of \emph{which} state representation is best is partly answered by which one the algorithm can absorb in time.
 
 \section{Figures for Dimension Comparison}
 
@@ -1058,26 +1181,21 @@ Taken together, Figures \ref{fig:en-scenario-bars-a}--\ref{fig:en-cap-approval} 
 
 \subsection{Why 30D is the most balanced state size}
 
-The 30D state is the strongest compromise in the current outputs. It delivers the largest jump in best-RL reward, improves profit and NPV materially, lowers default rate relative to 20D, and does so with lower approval and capital usage. In other words, it improves the quality of selectivity rather than only the quantity of lending.
+Something unexpected happens between 20D and 30D. The best RL controller does not just earn more reward---it does so while approving \emph{fewer} loans and using \emph{less} capital. That combination is unusual enough to deserve a closer look at what the 30D additions actually provide.
 
-The extra information added between 20D and 30D is not arbitrary. It is precisely the historical memory layer: lagged approval, lagged realized default, lagged realized profit, lagged capital usage, rolling means, rolling profit variability, and lagged threshold changes. Those variables are well matched to a weekly control problem because they tell the controller whether the latest week is exceptional or part of an emerging pattern. That is especially useful in drift, noise, and composition-shift environments.
+Read against the manifest, the difference between the two state sizes is precisely the historical memory layer: lagged approval, lagged realized default, lagged realized profit, lagged capital usage, rolling means, rolling profit variability, and lagged threshold changes. Those variables tell the controller whether the latest week is exceptional or part of an emerging pattern. The 30D row in the best-RL table is therefore not a generic ``more is better'' result. It says, specifically, that lagged and rolling memory of \emph{this} portfolio's recent past is the information that lets the agent be more selective and earn more reward at the same time. Drift, noise, and composition-shift environments are where that recent-past signal pays off most directly.
 
 \subsection{Why 50D saturates}
 
-The move from 30D to 50D still adds meaningful descriptors, but their incremental value is smaller. Segment-level means, rolling reward moments, cumulative totals to date, and threshold-gap history make the observation richer, yet the best RL reward no longer improves. In practice, this looks like a saturation frontier: once the controller already knows current performance, recent history, and lagged threshold behavior, the additional segmentation and stability coordinates do not produce a comparable gain in decision quality under the current training budget.
+The 50D state size is the natural place to expect the best results, and that is not what the table shows. The added coordinates are not redundant in any obvious sense---they cover segment-level means, rolling reward moments, cumulative totals to date, and threshold-gap history---and yet the best RL reward stops improving. The shape of the curve is the familiar saturation frontier: once the controller already knows current performance, recent history, and lagged threshold behaviour, additional segmentation and stability descriptors do not produce a comparable gain in decision quality at the current training budget.
 
-There is also a more cautionary reading. The 50D run is not merely ``no better.'' It actively harms some algorithms. Double-DQN falls from a positive reward of $69{,}812.02$ at 20D to $-79{,}329.16$ at 50D, and SAC deteriorates sharply as well. This means that the 50D state can be viewed as both richer and more optimization-demanding. The state itself is not bad, but its control value is conditional on the learning algorithm and the training budget.
+A second, less comfortable reading sits underneath the saturation story. The 50D run is not merely ``no better.'' It actively harms some algorithms. Double-DQN falls from a positive reward of $69{,}812.02$ at 20D to $-79{,}329.16$ at 50D, and SAC deteriorates sharply as well. The 50D state is therefore both richer and more optimization-demanding. The state itself is not bad. Its control value is conditional on the learning algorithm and the training budget.
 
 \subsection{Why the best baseline still wins overall}
 
-The persistent dominance of \texttt{profit\_oriented} and \texttt{constraint\_aware\_weekly} is not accidental. Both baselines exploit privileged structural alignment with the environment.
-\begin{itemize}[leftmargin=*]
-    \item They perform explicit weekly search over the same threshold grid that the environment exposes.
-    \item They do not have to learn a value function or policy representation from limited episodes.
-    \item Their decisions are directly tied to the simulator's current weekly economics and constraint structure.
-\end{itemize}
+Why does a hand-crafted weekly grid search keep beating six neural-network agents? The answer is uncomfortable but plausible: \texttt{profit\_oriented} and \texttt{constraint\_aware\_weekly} have a structural advantage that has nothing to do with cleverness. They search the same discrete threshold grid the environment exposes, and they evaluate each candidate using the simulator's own weekly economics. There is no value function to fit, no policy to parameterize, and no replay buffer to populate---only the current week, the threshold grid, and the constraint check.
 
-Under the quick profile, RL has only 12 training episodes per seed, which is deliberately small. The fair interpretation is therefore not ``RL failed.'' The fair interpretation is that strong hand-crafted policy search remains extremely competitive in a well-structured simulator, while RL becomes meaningfully better when the state is informative enough and the scenario is favorable enough.
+Under the quick profile, RL has only 12 training episodes per seed. That is deliberately small, and it is part of the design rather than a flaw. The fair reading of the leaderboard is not that RL failed. It is that strong hand-crafted policy search remains extremely competitive in a well-structured simulator, and that RL becomes meaningfully better when the state is informative enough and the scenario is favourable enough.
 
 \subsection{Portfolio-quality trade-offs}
 
@@ -1139,18 +1257,13 @@ Overall, the main answer to the research question is conditional. Reinforcement 
 
 The main limitations remain the synthetic nature of the simulator, the short quick-profile training budget, the designed reward function, and the episode-static behavior of the best RL policies in the current runs. Future work should test longer training profiles, reward-sensitivity analysis, stronger adaptive RL policies, calibration on real or semi-synthetic credit data, and more explicit regulatory or capital constraints.
 
+\subsection*{A personal observation}
+
+Looking back at the experimental design, the result I found most counterintuitive was that the best RL policies in the quick profile turned out to be episode-static. The whole point of formulating the problem as sequential weekly control was to let an agent respond to changing portfolio conditions, and the agent's reaction in the strongest runs was to pick one threshold pair at the start of the episode and hold it there. I had expected the dimensionality gradient to show up as richer within-episode behaviour. It showed up instead as better episode-level selection. The second surprise was the direction of the adverse-stress result: I had assumed that more state would, eventually, let RL ride out a shock. In the full-profile run it did the opposite---the static baseline pulled further ahead, not closer. Both observations made me more careful about reading dimensionality experiments as if richer state were automatically a step toward more adaptive policy, and they are the part of this thesis I would most like to follow up on with longer training and reward-shaping experiments.
+
 \section*{Statement on the Use of AI Tools}
 
 During the preparation of this thesis, large language model assistants (Claude by Anthropic and ChatGPT by OpenAI) were used as auxiliary tools to support literature search, grammar checking of selected passages, and explanation of mathematical and algorithmic concepts. All experimental design, simulator implementation, data analysis, interpretation of results, and academic responsibility remain entirely with the author.
-
-% \section*{Code Availability}
-
-% The complete simulation environment, experimental configuration, agent implementations, evaluation pipeline, and output artifacts produced for this thesis are publicly available at:
-
-% \begin{center}
-%     \href{https://github.com/EvgenyBaulin/Evaluation-of-RL-framework-in-a-credit-scoring-problem}{%
-%         \texttt{https://github.com/EvgenyBaulin/Evaluation-of-RL-framework-in-a-credit-scoring-problem}}
-% \end{center}
 
 \bibliographystyle{plain}
 \bibliography{references}
