@@ -1,18 +1,15 @@
 # Local files 
-/.DS_Store
+**/.DS_Store
 /Documents
 /Запись встречи по ВКР*
 /Examples
 Plan diploma*
 Predefence*
 /Tex/out
-claude*
-CLAUDE*
-Claude*
-.claude*
 /out
 /Final
 /Tex/Signature.jpeg
+Defence*
 
 # IDE files
 /.vscode

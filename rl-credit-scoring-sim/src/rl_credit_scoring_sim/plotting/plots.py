@@ -6,16 +6,28 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
+
+# seaborn is only required by the scenario/curve helpers; the standalone
+# full-profile summary figures use pure matplotlib, so the import is optional.
+try:
+    import seaborn as sns
+except ModuleNotFoundError:  # pragma: no cover - seaborn is an optional plotting extra
+    sns = None
+
+if sns is not None:
+    sns.set_theme(style="whitegrid", context="talk")
+else:
+    plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
 
 
-sns.set_theme(style="whitegrid", context="talk")
-
-
-def _save_figure(fig, path: Path) -> None:
+def _save_figure(fig, path: Path, tight_rect=None) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.tight_layout()
-    fig.savefig(path, dpi=180, bbox_inches="tight")
+    if tight_rect is not None:
+        fig.tight_layout(rect=tight_rect)
+    else:
+        fig.tight_layout()
+    # Print-quality raster (>=300 dpi) for the journal PDF.
+    fig.savefig(path, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -62,6 +74,7 @@ def plot_metric_bars(
     ax.set_xlabel("Scenario")
     ax.set_ylabel(y_label)
     ax.tick_params(axis="x", rotation=25)
+    ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1), borderaxespad=0)
     _save_figure(fig, output_path)
 
 
@@ -101,9 +114,9 @@ def plot_cumulative_curves(curves_df: pd.DataFrame, output_path: Path, metric: s
     for ax in axes[len(scenarios):]:
         ax.set_visible(False)
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="upper center", ncols=min(4, len(labels)))
-    fig.suptitle(title, y=1.02)
-    _save_figure(fig, output_path)
+    fig.legend(handles, labels, loc="lower center", ncols=min(5, len(labels)), bbox_to_anchor=(0.5, 0))
+    fig.suptitle(title, y=0.98)
+    _save_figure(fig, output_path, tight_rect=[0, 0.14, 1, 0.94])
 
 
 def plot_threshold_paths(weekly_df: pd.DataFrame, output_path: Path, scenario_name: str, controllers: list[str]) -> None:
@@ -119,13 +132,15 @@ def plot_threshold_paths(weekly_df: pd.DataFrame, output_path: Path, scenario_na
             .sort_values(["controller", "interactive_week"])
         )
         sns.lineplot(data=summary, x="interactive_week", y=metric, hue="controller", ax=ax)
+        if ax.get_legend():
+            ax.get_legend().remove()
         ax.set_title(label)
         ax.set_xlabel("Interactive week")
         ax.set_ylabel("Threshold")
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="upper center", ncols=min(4, len(labels)))
-    fig.suptitle(f"Threshold Paths in {scenario_name}", y=1.02)
-    _save_figure(fig, output_path)
+    fig.legend(handles, labels, loc="lower center", ncols=min(4, len(labels)), bbox_to_anchor=(0.5, 0))
+    fig.suptitle(f"Threshold Paths in {scenario_name}", y=0.98)
+    _save_figure(fig, output_path, tight_rect=[0, 0.12, 1, 0.94])
 
 
 def plot_ablation_bars(ablation_summary: pd.DataFrame, output_path: Path) -> None:
@@ -135,6 +150,7 @@ def plot_ablation_bars(ablation_summary: pd.DataFrame, output_path: Path) -> Non
     ax.set_xlabel("Ablation")
     ax.set_ylabel("Cumulative reward")
     ax.tick_params(axis="x", rotation=20)
+    ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1), borderaxespad=0)
     _save_figure(fig, output_path)
 
 
@@ -209,9 +225,9 @@ def plot_best_rl_threshold_paths(
     for ax in axes[len(scenarios):]:
         ax.set_visible(False)
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="upper center", ncols=2)
-    fig.suptitle(title, y=1.02)
-    _save_figure(fig, output_path)
+    fig.legend(handles, labels, loc="lower center", ncols=2, bbox_to_anchor=(0.5, 0))
+    fig.suptitle(title, y=0.98)
+    _save_figure(fig, output_path, tight_rect=[0, 0.08, 1, 0.94])
 
 
 def plot_metric_vs_dimension(
@@ -234,7 +250,9 @@ def plot_metric_vs_dimension(
         if frame.empty:
             continue
         ax.plot(frame["state_dim"], frame[mean_col], marker="o", linewidth=2, label=label, color=color)
-        ax.fill_between(frame["state_dim"], frame[lower_col], frame[upper_col], alpha=0.15, color=color)
+        # Bootstrap CI band is optional: curated summary means may not carry CI columns.
+        if lower_col in frame.columns and upper_col in frame.columns:
+            ax.fill_between(frame["state_dim"], frame[lower_col], frame[upper_col], alpha=0.15, color=color)
 
     ax.set_title(title)
     ax.set_xlabel("State dimension")
@@ -242,3 +260,41 @@ def plot_metric_vs_dimension(
     ax.set_xticks(sorted(set(best_rl_df["state_dim"]).union(set(overall_best_df["state_dim"]))))
     ax.legend()
     _save_figure(fig, output_path)
+
+
+def plot_dimensionality_saturation(summary_df: pd.DataFrame, output_path: Path) -> None:
+    """Full-profile dimensionality figure (two panels) built from curated per-dimension means.
+
+    Expects one row per state dimension with columns:
+      ``state_dim``,
+      ``best_rl_profit``, ``best_overall_profit``,
+      ``best_rl_default``, ``best_overall_default``.
+    No bootstrap-CI columns are required: the curated full-profile summary stores
+    point means only, so this figure shows means without CI bands.
+    """
+    frame = summary_df.sort_values("state_dim")
+    dims = frame["state_dim"].to_numpy()
+    fig, (ax_profit, ax_default) = plt.subplots(1, 2, figsize=(15, 6))
+
+    ax_profit.plot(dims, frame["best_overall_profit"], marker="s", linewidth=2.2,
+                   color="#d62728", label="Best overall (constraint-aware weekly)")
+    ax_profit.plot(dims, frame["best_rl_profit"], marker="o", linewidth=2.2,
+                   color="#1f77b4", label="Best RL (Double-DQN)")
+    ax_profit.set_title("Realized portfolio profit")
+    ax_profit.set_xlabel("State dimension")
+    ax_profit.set_ylabel("Profit")
+    ax_profit.set_xticks(dims)
+
+    ax_default.plot(dims, frame["best_overall_default"], marker="s", linewidth=2.2,
+                    color="#d62728", label="Best overall (constraint-aware weekly)")
+    ax_default.plot(dims, frame["best_rl_default"], marker="o", linewidth=2.2,
+                    color="#1f77b4", label="Best RL (Double-DQN)")
+    ax_default.set_title("Default rate")
+    ax_default.set_xlabel("State dimension")
+    ax_default.set_ylabel("Default rate")
+    ax_default.set_xticks(dims)
+
+    handles, labels = ax_profit.get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncols=2, bbox_to_anchor=(0.5, -0.02), fontsize=12)
+    fig.suptitle("Best-controller performance vs. observation dimensionality (full profile)", y=1.0)
+    _save_figure(fig, output_path, tight_rect=[0, 0.06, 1, 0.96])
