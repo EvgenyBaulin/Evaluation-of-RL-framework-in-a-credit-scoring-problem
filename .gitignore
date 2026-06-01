@@ -4,12 +4,12 @@
 /Запись встречи по ВКР*
 /Examples
 Plan diploma*
-Predefence*
+Predefense*
 /Tex/out
 /out
 /Final
 /Tex/Signature.jpeg
-Defence*
+Defense*
 
 # IDE files
 /.vscode
@@ -17,3 +17,5 @@ Defence*
 
 rl-credit-scoring-sim/outputs/
 rl-credit-scoring-sim/.venv/
+rl-credit-scoring-sim/.DS_Store
+Tex/.DS_Store
