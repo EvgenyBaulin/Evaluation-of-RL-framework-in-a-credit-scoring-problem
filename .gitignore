@@ -6,7 +6,6 @@
 Plan diploma*
 Predefense*
 /Tex/out
-/out
 /Final
 /Tex/Signature.jpeg
 Defense*
@@ -14,8 +13,3 @@ Defense*
 # IDE files
 /.vscode
 /.idea
-
-rl-credit-scoring-sim/outputs/
-rl-credit-scoring-sim/.venv/
-rl-credit-scoring-sim/.DS_Store
-Tex/.DS_Store
