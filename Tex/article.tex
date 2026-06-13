@@ -65,9 +65,9 @@
 
     \title{Reinforcement Learning vs.\ Rule-Based Policies for Dynamic Credit Threshold Control: A Simulation Study}
 
-    \author[hse]{Evgeny Baulin\corref{cor1}}
+    \author[hse]{Evgeny Baulin\corref{cor1}\fnref{orcid1}}
     \ead{eabaulin@edu.hse.ru}
-    \author[isp]{P.~P.~Lukianchenko}
+    \author[isp]{P.~P.~Lukianchenko\fnref{orcid2}}
     \ead{p.lukyanchenko@ispras.ru}
 
     \affiliation[hse]{organization={HSE University, Faculty of Computer Science},
@@ -76,6 +76,8 @@
     \affiliation[isp]{organization={Trusted AI Research Center, Ivannikov Institute for System Programming of the RAS (ISP RAS)},
         city={Moscow}, country={Russia}}
     \cortext[cor1]{Corresponding author.}
+    \fntext[orcid1]{ORCID: \href{https://orcid.org/0009-0004-9030-2893}{0009-0004-9030-2893}.}
+    \fntext[orcid2]{ORCID: \href{https://orcid.org/0000-0002-1022-6041}{0000-0002-1022-6041}.}
 
     \begin{abstract}
         Portfolio-level credit acceptance thresholds are revised periodically in practice,
@@ -100,7 +102,7 @@
         Richer-state RL agents nonetheless achieve lower portfolio default rates than the two
         profit-seeking baselines in a majority of scenarios, while the risk-aware weekly
         policy remains the lowest-default controller overall, a conditional risk-side
-        advantage. We conclude that well-designed rule-based weekly threshold search remains
+        advantage. A further central finding is that the best RL policies are episode-static, fixing a threshold pair at the start of each episode and barely adjusting it within the horizon, so richer observations improve initial threshold selection rather than genuine week-to-week adaptation under the short training budget. We conclude that well-designed rule-based weekly threshold search remains
         the benchmark when training budgets are short.
     \end{abstract}
 
@@ -210,8 +212,9 @@ Double-DQN reduces the overestimation bias of vanilla DQN \citep{van2016ddqn}, P
 on-policy policy-gradient method with stable updates \citep{schulman2017ppo}, SAC is an
 off-policy maximum-entropy actor-critic \citep{haarnoja2018sac}, and A3C and A2C are
 asynchronous and synchronous actor-critic variants. A broad survey of these methods
-appears in \citet{arulkumaran2017}, and the implementations follow Stable-Baselines3
-\citep{stable_baselines3}.
+appears in \citet{arulkumaran2017}. In this study A2C, PPO, and SAC use the
+Stable-Baselines3 implementations \citep{stable_baselines3}, while DQN, Double-DQN, and
+A3C use matched custom PyTorch implementations.
 
 Applying RL to credit control is more recent and still thin. \citet{herasymovych2019}
 optimise the acceptance threshold of a credit-scoring model with RL in a simulated
@@ -242,7 +245,7 @@ $a_t = (\tau^{\text{new}}_t, \tau^{\text{repeat}}_t) \in \{35, 40, \ldots, 85\}^
 applications from new (repeat) clients with credit score above $\tau^{\text{new}}_t$
 ($\tau^{\text{repeat}}_t$) are accepted. This yields $11 \times 11 = 121$ joint actions
 per week. The \textbf{reward} is described in Section~\ref{sec:reward}. The discount
-factor is $\gamma = 0.99$.
+factor is $\gamma = 0.98$.
 
 Figure~\ref{fig:mdp-loop} shows the weekly decision loop as a Markov decision process.
 The figure makes explicit that each weekly action is scored only through delayed cash
@@ -279,7 +282,7 @@ threshold is set.
 Each episode consists of three phases. (1) An \textbf{8-week warm-up} pre-fills the loan
 book using default thresholds before the controller begins acting. (2) During the
 \textbf{52-week interactive horizon} the controller sets weekly thresholds. The simulator
-generates applications from Beta-distributed credit scores for new and repeat segments,
+generates applications from Gaussian credit scores clipped to $[0,100]$ for new and repeat segments,
 applies a logistic default-probability mapping, accepts loans above the threshold, and
 schedules repayment, default, and recovery events in a forward event queue.
 (3) \textbf{Terminal settlement} resolves all pending cash flows at episode end so that
@@ -303,7 +306,7 @@ rather than into the week of origination.
             \node[phase, minimum width=52mm, right=0mm of warm] (inter) {Interactive control\\ 52 weekly decisions};
             \node[phase, fill=black!8, minimum width=28mm, right=0mm of inter] (term) {Terminal\\ settlement};
             \node[lstep, below=18mm of warm] (apps) {Applications};
-            \node[lstep, right=7mm of apps] (score) {Beta credit\\ score};
+            \node[lstep, right=7mm of apps] (score) {Gaussian credit\\ score};
             \node[lstep, right=7mm of score] (thr) {Threshold\\ accept / reject};
             \node[lstep, right=7mm of thr] (queue) {Forward\\ event queue};
             \node[lstep, right=7mm of queue] (out) {Delayed repay /\\ default / recovery};
@@ -346,10 +349,12 @@ regime.
 \subsection{Agents and Baselines}
 
 \textbf{RL agents.}\;
-All six agents use a shared two-layer MLP ($2 \times 64$ hidden units) and
-Stable-Baselines3 default hyperparameters (see Appendix~\ref{app:hyperparams}). No
-hyperparameter search is performed. The goal is to isolate the state-dimensionality
-signal rather than to optimise the training recipe.
+All six agents use a shared two-layer MLP ($2 \times 128$ hidden units) and a fixed set
+of hyperparameters held identical across the four state sizes (\ref{app:hyperparams}).
+A2C, PPO, and SAC use Stable-Baselines3, while DQN, Double-DQN, and A3C use matched
+custom PyTorch implementations. No per-dimension hyperparameter search is performed, so
+any performance difference across dimensions is attributable to the observation vector
+rather than to the training recipe.
 
 \textbf{Rule-based baselines} span five management styles. The static-threshold
 baseline (\texttt{static\_threshold}) applies one fixed shared threshold. The
@@ -568,9 +573,9 @@ of the best baseline at its 12D peak.
         \toprule
         Controller              & Type     & Mean profit   & Default rate & Approval  \\
         \midrule
-        Constraint-aware weekly & baseline & 3{,}802{,}547 & 7.60\%       & $\dagger$ \\ % TODO: full-profile approval-rate aggregate for this baseline not in released summary
-        Profit-oriented         & baseline & 3{,}803{,}168 & $\dagger$    & $\dagger$ \\ % TODO: full-profile default/approval aggregates for this baseline not in released summary
-        Static-threshold        & baseline & $\dagger$     & $\dagger$    & $\dagger$ \\ % TODO: full-profile profit/default/approval aggregates for this baseline not in released summary
+        Constraint-aware weekly & baseline & 3{,}802{,}547 & 7.60\%       & $\dagger$ \\ % NOTE: full-profile approval-rate aggregate for this baseline not in released summary
+        Profit-oriented         & baseline & 3{,}803{,}168 & $\dagger$    & $\dagger$ \\ % NOTE: full-profile default/approval aggregates for this baseline not in released summary
+        Static-threshold        & baseline & $\dagger$     & $\dagger$    & $\dagger$ \\ % NOTE: full-profile profit/default/approval aggregates for this baseline not in released summary
         \midrule
         Double-DQN              & RL       & 3{,}194{,}446 & 7.19\%       & 0.767     \\
         DQN                     & RL       & 2{,}960{,}000 & 7.02\%       & 0.700     \\
@@ -788,6 +793,54 @@ Equation~\eqref{eq:reward}, and a reward sensitivity analysis is left for future
 Fourth, bootstrap confidence intervals quantify simulation uncertainty, not real-world
 external validity.
 
+These results are bounded by the synthetic setting. The default and recovery parameters are calibrated to aggregate statistics rather than fitted to a single proprietary book, so the absolute profit and default levels should be read as order-of-magnitude rather than exact. The training budget is deliberately short, which favours strong rule-based search and limits what the reinforcement-learning agents can recover, so a larger budget could narrow the gap reported here. The real-data comparison validates the score-to-default relationship and the parameter ranges, but it does not validate the weekly threshold dynamics directly, which would require a lender to deploy and log a controlled threshold policy.
+
+% ===========================================================================
+\section{Threats to validity}
+% ===========================================================================
+\label{sec:threats}
+The conclusions of this study rest on a synthetic simulator, so their external validity depends on how faithfully the simulator reproduces the dynamics of real unsecured consumer lending. This section states the main threats, compares the simulator against published real-world evidence, and explains why an agent-based simulator remains the appropriate tool under these threats.
+
+\subsection{Construct validity and simulator fidelity}
+The portfolio is generated from parametric assumptions rather than observed loans, which introduces three concrete risks. First, the logistic default model in~\ref{app:simulator} imposes a smooth monotone link between score and default probability, whereas real default curves can be locally non-monotone in thin score regions. Second, the weekly event schedule collapses repayment, default, and recovery into a small set of timed cashflows, which understates the heterogeneity of real repayment paths. Third, the scenario set spans six stylised regimes, so it cannot represent every macro-financial path a real book would face. We mitigate these risks by calibrating every primary parameter to published statistics and by comparing the score-to-default relationship against a large real loan book, as described next.
+
+\subsection{Comparison with published evidence and a real loan book}
+Real consumer credit portfolios show a wide spread of default rates and strong class imbalance \citep{brownmues2012}, which the scenario set is designed to span. Table~\ref{tab:calibration} places each primary simulator parameter next to the corresponding real-world range and its source. In Table~\ref{tab:calibration}, the portfolio default rate, the loan tenor, the effective interest, and the recovery assumption all fall inside the ranges reported for unsecured retail lending, and the acceptance-threshold mechanism reproduces the setup of \citet{herasymovych2019}, whose optimal acceptance threshold on a real online consumer-loan book sits in the same mid-score region used here. Figure~\ref{fig:pd_real_vs_sim} overlays the simulator default-probability curves on the empirical default rate by within-book credit-score percentile estimated from the Lending Club loan book \citep{xia2017}. In Figure~\ref{fig:pd_real_vs_sim}, plotting against the within-book percentile aligns the two score domains, and both relationships fall monotonically while the higher Lending Club levels reflect its higher-rate and longer-tenor borrower mix.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.15}
+    \caption{Calibration of the simulator against published evidence. In Table~\ref{tab:calibration}, each primary parameter sits inside a real-world range, and the sources are aggregate statistics and peer-reviewed studies rather than a single proprietary book.}
+    \label{tab:calibration}
+    \begin{tabular}{p{0.215\linewidth} p{0.235\linewidth} p{0.46\linewidth}}
+        \toprule
+        Parameter              & Simulator                           & Real-world range (source)                                                                                     \\
+        \midrule
+        Portfolio default rate & 4--14\% across scenarios            & around 4--5\% in normal conditions and up to 12.9\% under stress for unsecured consumer loans \citep{cbr2025}
+        \newline 20.0\% on Lending Club resolved loans (own computation; \citealp{xia2017})                                                                                          \\
+        Acceptance mechanism   & weekly score threshold, grid 35--85 & optimal threshold in the mid-score region on a real online book \citep{herasymovych2019}                      \\
+        Loan tenor             & 4--12 months                        & short-term consumer and online installment products \citep{herasymovych2019}
+        \newline Lending Club is longer, with 76\% at 36 months and 24\% at 60 months                                                                                                \\
+        Loan amount            & 0.3--9.0 k currency units           & small-ticket loans typical of short-term online consumer lending \citep{herasymovych2019}
+        \newline Lending Club median is larger, at 12{,}000 USD                                                                                                                      \\
+        Effective interest     & 11--15\% annualised                 & comparable to the Lending Club median of 12.7\%                                                               \\
+        Recovery on default    & 26--34\% (LGD $\approx$ 66--74\%)   & recovery distributions for unsecured consumer loans \citep{loterman2012, qi2011}                              \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.72\linewidth]{figures/pd_real_vs_sim.pdf}
+    \caption{Default probability by within-book credit-score percentile, simulator curves versus the Lending Club loan book. In Figure~\ref{fig:pd_real_vs_sim}, the within-book percentile axis aligns the two score domains, and the higher Lending Club levels reflect its higher-rate and longer-tenor borrower mix.}
+    \label{fig:pd_real_vs_sim}
+\end{figure}
+
+\subsection{Why an agent-based simulator}
+Loan-level data that jointly record the score, the funding decision, the realised outcome, and the calendar timing across several market regimes are rarely public, because lender underwriting models and outcome histories are proprietary assets \citep{dimaggio2024}. In the absence of such data, an agent-based simulator acts as a controlled laboratory that varies one factor at a time, here the observation dimension, while holding the protocol fixed, which is the comparison that observational data cannot deliver \citep{axtellfarmer2025}. We therefore read the simulator as a tool for studying the structure of the control problem under a fixed training budget, not as a forecast of any single lender's profit.
+
 % ===========================================================================
 \section{Conclusion}
 % ===========================================================================
@@ -840,11 +893,22 @@ and validation on real or semi-synthetic loan panels.
     \textit{IEEE Signal Processing Magazine, 34}(6), 26--38.
     \url{https://doi.org/10.1109/MSP.2017.2743240}
 
+    \bibitem[Axtell \& Farmer(2025)]{axtellfarmer2025}
+    Axtell, R.~L., \& Farmer, J.~D. (2025).
+    Agent-based modeling in economics and finance: Past, present, and future.
+    \textit{Journal of Economic Literature}.
+    \url{https://doi.org/10.1257/jel.20221319} % TODO add volume/issue/pages once assigned
+
     \bibitem[Baesens et~al.(2003)]{baesens2003}
     Baesens, B., Van Gestel, T., Viaene, S., Stepanova, M., Suykens, J., \& Vanthienen, J. (2003).
     Benchmarking state-of-the-art classification algorithms for credit scoring.
     \textit{Journal of the Operational Research Society, 54}(6), 627--635.
     \url{https://doi.org/10.1057/palgrave.jors.2601545}
+
+    \bibitem[Bank of Russia(2025)]{cbr2025}
+    Bank of Russia. (2025).
+    \textit{Financial stability review}. Bank of Russia.
+    \url{https://www.cbr.ru/eng/analytics/finstab/ofs/} % TODO confirm exact issue and reporting period
 
     \bibitem[Bellotti \& Crook(2009)]{bellotti2009}
     Bellotti, T., \& Crook, J. (2009).
@@ -852,11 +916,23 @@ and validation on real or semi-synthetic loan panels.
     \textit{Expert Systems with Applications, 36}(2), 3302--3308.
     \url{https://doi.org/10.1016/j.eswa.2008.01.005}
 
+    \bibitem[Brown \& Mues(2012)]{brownmues2012}
+    Brown, I., \& Mues, C. (2012).
+    An experimental comparison of classification algorithms for imbalanced credit scoring data sets.
+    \textit{Expert Systems with Applications, 39}(3), 3446--3453.
+    \url{https://doi.org/10.1016/j.eswa.2011.09.033}
+
     \bibitem[Dayan \& Niv(2008)]{dayan2008}
     Dayan, P., \& Niv, Y. (2008).
     Reinforcement learning: The good, the bad and the ugly.
     \textit{Current Opinion in Neurobiology, 18}(2), 185--196.
     \url{https://doi.org/10.1016/j.conb.2008.08.003}
+
+    \bibitem[Di Maggio et~al.(2024)]{dimaggio2024}
+    Di Maggio, M., Ratnadiwakara, D., \& Carmichael, D. (2024).
+    Invisible primes: Fintech lending with alternative data.
+    \textit{Management Science}.
+    \url{https://doi.org/10.1287/mnsc.2024.07854} % TODO add volume/issue/pages once assigned
 
     \bibitem[Gunnarsson et~al.(2021)]{gunnarsson2021}
     Gunnarsson, B.~R., vanden Broucke, S., Baesens, B., \'Oskarsd\'ottir, M., \& Lemahieu, W. (2021).
@@ -894,11 +970,23 @@ and validation on real or semi-synthetic loan panels.
     \textit{European Journal of Operational Research, 247}(1), 124--136.
     \url{https://doi.org/10.1016/j.ejor.2015.05.030}
 
+    \bibitem[Loterman et~al.(2012)]{loterman2012}
+    Loterman, G., Brown, I., Martens, D., Mues, C., \& Baesens, B. (2012).
+    Benchmarking regression algorithms for loss given default modeling.
+    \textit{International Journal of Forecasting, 28}(1), 161--170.
+    \url{https://doi.org/10.1016/j.ijforecast.2011.01.006}
+
     \bibitem[Nallakaruppan et~al.(2024)]{nallakaruppan2024}
     Nallakaruppan, M.~K., Balusamy, B., Shri, M.~L., Malathi, V., \& Bhattacharyya, S. (2024).
     An explainable AI framework for credit evaluation and analysis.
     \textit{Applied Soft Computing, 153,} 111307.
     \url{https://doi.org/10.1016/j.asoc.2024.111307}
+
+    \bibitem[Qi \& Zhao(2011)]{qi2011}
+    Qi, M., \& Zhao, X. (2011).
+    Comparison of modeling methods for loss given default.
+    \textit{Journal of Banking \& Finance, 35}(11), 2842--2855.
+    \url{https://doi.org/10.1016/j.jbankfin.2011.03.011}
 
     \bibitem[Raffin et~al.(2021)]{stable_baselines3}
     Raffin, A., Hill, A., Gleave, A., Kanervisto, A., Ernestus, M., \& Dormann, N. (2021).
@@ -927,6 +1015,12 @@ and validation on real or semi-synthetic loan panels.
         AAAI Conference on Artificial Intelligence} (Vol.~30, pp.~2094--2100). AAAI Press.
     \url{https://doi.org/10.1609/aaai.v30i1.10295}
 
+    \bibitem[Xia et~al.(2017)]{xia2017}
+    Xia, Y., Liu, C., Li, Y., \& Liu, N. (2017).
+    A boosted decision tree approach using Bayesian hyper-parameter optimization for credit scoring.
+    \textit{Expert Systems with Applications, 78,} 225--241.
+    \url{https://doi.org/10.1016/j.eswa.2017.02.017}
+
     \bibitem[Yang et~al.(2024)]{yang2024}
     Yang, D., Xiao, B., Cao, M., \& Shen, H. (2024).
     A new hybrid credit scoring ensemble model with feature enhancement and soft voting weight optimization.
@@ -946,7 +1040,49 @@ and validation on real or semi-synthetic loan panels.
 \appendix
 % ===========================================================================
 
-\section{Hyperparameter Table}
+\section{Simulator details}
+\label{app:simulator}
+
+This appendix specifies the data-generating process so that the experiments can be reproduced from the public repository. All values are the calibrated full-profile settings.
+
+\paragraph{Applicant generation.}
+Each interactive week the simulator draws a base application volume around 600 applications, scales it by a seasonal factor and multiplicative volume noise, and splits it into new and repeat counts through two Poisson draws. The repeat share follows a scenario base level modulated by an annual seasonal term and clamped to $[0.15, 0.75]$. Each applicant in segment $s$ receives a credit score drawn from a Gaussian $\mathcal{N}(\mu_s, \sigma_s)$ clipped to $[0,100]$, with $\mu_{\text{new}}=59$, $\sigma_{\text{new}}=13$ and $\mu_{\text{repeat}}=69$, $\sigma_{\text{repeat}}=10$ in the base market.
+
+\paragraph{Default and recovery.}
+An applicant with score $x$ in segment $s$ defaults with probability
+\begin{equation}
+    p_s(x) = \sigma\!\left(\beta_s - \kappa_s \cdot \tfrac{x-50}{10}\right),
+    \label{eq:pd}
+\end{equation}
+clipped to $[0.01, 0.98]$, where $\sigma$ is the logistic function and $\beta_{\text{new}}=-2.3$, $\kappa_{\text{new}}=0.18$, $\beta_{\text{repeat}}=-2.6$, $\kappa_{\text{repeat}}=0.20$ in the base market. Scenario stress shifts $\beta_s$ gradually over the horizon and an abrupt shock adds to $\beta_s$ from the shock week onward (Table~\ref{tab:scenario_params}). These settings target portfolio default rates of 4--6\% in the base market and 9--14\% under adverse stress. A defaulted loan recovers with probability $r_{\text{new}}=0.26$ or $r_{\text{repeat}}=0.34$, and on recovery the lender receives the principal plus a fraction $\varphi_s$ of the scheduled interest, with $\varphi_{\text{new}}=0.65$ and $\varphi_{\text{repeat}}=0.72$.
+
+\paragraph{Loan terms and cashflows.}
+The principal is lognormal with mean $A_{\text{new}}=1650$ or $A_{\text{repeat}}=2150$ currency units and log-scale $0.28$ (new) or $0.25$ (repeat), clipped to $[300, 9000]$ and scaled by the scenario loan-amount multiplier. Each loan receives an integer term $d$ in months (new: 5--12, repeat: 4--10) and a scheduled interest income of $\text{principal}\times(\rho_s\, d/12 + o_s)$, with annual fee rate $\rho_{\text{new}}=0.16$, $\rho_{\text{repeat}}=0.13$ and origination $o_{\text{new}}=0.035$, $o_{\text{repeat}}=0.03$. Outcomes enter a forward event queue: a repaid loan returns the interest at week $\text{issue}+d$, a defaulted loan returns $-\text{principal}$ at week $\text{issue}+d$, and a recovered loan adds the recovery value a further 1--4 weeks later. The term index $d$ therefore sets both the interest horizon $d/12$ years and the event delay $d$ weeks. Each cashflow is discounted to net present value at a weekly rate of $0.14/52$, that is an annual discount rate of 14\%.
+
+\paragraph{Episode structure and capital.}
+Each episode runs an 8-week warm-up at the default thresholds (60 for new, 50 for repeat), then a 52-week interactive horizon, then a terminal settlement that resolves all pending events so that loans originated near the horizon are not penalised. Outstanding principal plus the principal accepted in the current week is tracked against a capital limit of 3{,}000{,}000 to form the capital-usage ratio used in the reward.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \caption{Per-scenario stress parameters. In Table~\ref{tab:scenario_params}, the score and default shifts are total drifts applied gradually over the horizon, and the shock column gives the magnitude added to the default intercept and the week it begins.}
+    \label{tab:scenario_params}
+    \resizebox{\linewidth}{!}{%
+        \begin{tabular}{l c c c c c c}
+            \toprule
+            Scenario                & Repeat share & Score shift (new/rep) & Default shift (new/rep) & Score noise & Loan mult. & Shock (week) \\
+            \midrule
+            base\_market            & 0.35         & $0.00$ / $0.00$       & $0.00$ / $0.00$         & 1.00        & 1.00       & none         \\
+            drift                   & 0.34         & $-0.18$ / $-0.07$     & $0.18$ / $0.08$         & 1.00        & 1.00       & 0.08 (13)    \\
+            adverse\_stress         & 0.33         & $-0.10$ / $-0.10$     & $0.30$ / $0.22$         & 1.15        & 1.15       & 0.22 (10)    \\
+            class\_imbalance\_shift & 0.28         & $-0.08$ / $0.03$      & $0.12$ / $-0.02$        & 1.00        & 0.95       & 0.12 (16)    \\
+            noise                   & 0.35         & $0.00$ / $0.00$       & $0.04$ / $0.04$         & 1.45        & 1.00       & none         \\
+            split\_policy\_dynamics & 0.38         & $-0.20$ / $0.10$      & $0.22$ / $-0.10$        & 1.00        & 1.00       & 0.06 (14)    \\
+            \bottomrule
+        \end{tabular}}
+\end{table}
+
+\section{Training hyperparameters}
 \label{app:hyperparams}
 
 In Table~\ref{tab:hyperparams}, the shared training configuration for the full-profile
@@ -957,16 +1093,14 @@ rather than to the training recipe.
 \begin{table}[H]
     \centering
     \small
-    \caption{Shared hyperparameters (full-profile run). Algorithm-specific defaults
-        (replay buffer size, GAE $\lambda$, entropy coefficient) follow the
-        Stable-Baselines3 defaults \citep{stable_baselines3}.}
+    \caption{Shared training settings (full-profile run), held identical across all four state sizes. In Table~\ref{tab:hyperparams}, these settings are fixed so that any difference across dimensions reflects the observation vector rather than the training recipe.}
     \label{tab:hyperparams}
     \begin{tabular}{l l l}
         \toprule
         Parameter                & Value                           & Notes                      \\
         \midrule
-        Network architecture     & MLP, $2\times 64$ hidden units  & Shared across all agents   \\
-        Discount factor $\gamma$ & $0.99$                          & Standard                   \\
+        Network architecture     & MLP, $2\times 128$ hidden units & Shared across all agents   \\
+        Discount factor $\gamma$ & $0.98$                          & Standard                   \\
         Learning rate            & SB3 default (varies by agent)   & Not tuned                  \\
         Training episodes/seed   & 50                              & Full profile               \\
         Seeds                    & 11, 23, 37, 51, 67, 79, 97, 113 & 8 seeds, fixed across dims \\
@@ -976,6 +1110,25 @@ rather than to the training recipe.
         Interactive horizon      & 52 weeks                        & Full profile               \\
         Applications per week    & 600                             & Before scale factors       \\
         Bootstrap resamples      & 1000                            & 95\% CI                    \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Per-agent reinforcement-learning hyperparameters (full-profile run), held identical across all four state sizes. In Table~\ref{tab:agent_hyperparams}, A2C, PPO, and SAC use Stable-Baselines3 \citep{stable_baselines3}, while DQN, Double-DQN, and A3C use matched custom PyTorch implementations.}
+    \label{tab:agent_hyperparams}
+    \begin{tabular}{l l p{0.5\linewidth}}
+        \toprule
+        Agent      & Implementation & Key hyperparameters                                                                                                                                                          \\
+        \midrule
+        DQN        & Custom         & lr $10^{-3}$, batch 64, replay $2\times10^{4}$, learning starts 300, train freq 1, gradient steps 1, target update 200, $\varepsilon$ $1.0\!\to\!0.05$ over 65\% of training \\
+        Double-DQN & Custom         & As DQN, with a double-Q target                                                                                                                                               \\
+        PPO        & SB3            & lr $3\times10^{-4}$, rollout $n=256$, batch 64, GAE $\lambda$ 0.95, entropy coef 0.01, clip range 0.20                                                                       \\
+        A2C        & SB3            & lr $7\times10^{-4}$, rollout $n=256$, GAE $\lambda$ 0.95, entropy coef 0.01                                                                                                  \\
+        A3C        & Custom         & lr $5\times10^{-4}$, entropy coef 0.01, value coef 0.5, full-episode rollouts (single worker)                                                                                \\
+        SAC        & SB3            & lr $3\times10^{-4}$, buffer $5\times10^{4}$, learning starts 500, batch 128, $\tau$ 0.02, train freq 1, gradient steps 1                                                     \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -993,4 +1146,9 @@ rather than to the training recipe.
 
 The authors declare that they have no known competing financial interests or personal
 relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Acknowledgements}
+
+This work was supported by the Ministry of Economic Development of the Russian
+Federation under Agreement 139-15-2025-011 (identifier 000000C313925P4G0002).
 \end{document}
