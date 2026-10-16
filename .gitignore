@@ -20,3 +20,20 @@ paper/*.out
 paper/*.fls
 paper/*.fdb_latexmk
 paper/*.synctex.gz
+
+# Local assistant files
+CLAUDE.md
+.claude/
+paper/out/
+
+# Local, not part of the article repository
+paper/diagrams/
+paper/extra_images/
+paper/submission/
+
+# Submission documents (cover letter, title page, highlights, declaration, ORCID)
+paper/cover_letter.tex
+paper/title_page.tex
+paper/highlights.tex
+paper/declaration_of_interest.tex
+paper/orcid_information.tex
