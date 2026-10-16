@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rl-credit-scoring-sim"
+version = "0.1.0"
+description = "Simulation-only RL framework for weekly credit-scoring threshold control."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "PyYAML>=6.0",
+  "matplotlib>=3.9",
+  "seaborn>=0.13",
+  "scipy>=1.14",
+  "torch>=2.3",
+  "gymnasium>=1.0,<1.1",
+  "stable-baselines3>=2.5,<2.6",
+]
+
+[project.scripts]
+rlcs-run = "rl_credit_scoring_sim.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

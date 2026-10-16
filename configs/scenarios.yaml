@@ -1,0 +1,96 @@
+scenarios:
+  base_market:
+    description: Stable market with moderate approval and default dynamics.
+    repeat_share_base: 0.35
+    weekly_volume_trend: 0.0
+    seasonal_amplitude: 0.05
+    score_shift_new: 0.0
+    score_shift_repeat: 0.0
+    default_shift_new: 0.0
+    default_shift_repeat: 0.0
+    score_noise_scale: 1.0
+    volume_noise_scale: 0.08
+    loan_amount_multiplier: 1.0
+    recovery_shift: 0.0
+    shock_start_week: null
+    shock_magnitude: 0.0
+
+  drift:
+    description: Gradual deterioration in new-client scores and mild volume growth.
+    repeat_share_base: 0.34
+    weekly_volume_trend: 0.10
+    seasonal_amplitude: 0.04
+    score_shift_new: -0.18
+    score_shift_repeat: -0.07
+    default_shift_new: 0.18
+    default_shift_repeat: 0.08
+    score_noise_scale: 1.0
+    volume_noise_scale: 0.10
+    loan_amount_multiplier: 1.0
+    recovery_shift: -0.02
+    shock_start_week: 13
+    shock_magnitude: 0.08
+
+  adverse_stress:
+    description: Abrupt negative shock with higher defaults and capital pressure.
+    repeat_share_base: 0.33
+    weekly_volume_trend: -0.06
+    seasonal_amplitude: 0.03
+    score_shift_new: -0.10
+    score_shift_repeat: -0.10
+    default_shift_new: 0.30
+    default_shift_repeat: 0.22
+    score_noise_scale: 1.15
+    volume_noise_scale: 0.14
+    loan_amount_multiplier: 1.15
+    recovery_shift: -0.08
+    shock_start_week: 10
+    shock_magnitude: 0.22
+
+  class_imbalance_shift:
+    description: Faster growth in new-client share with lower average quality.
+    repeat_share_base: 0.28
+    weekly_volume_trend: 0.12
+    seasonal_amplitude: 0.04
+    score_shift_new: -0.08
+    score_shift_repeat: 0.03
+    default_shift_new: 0.12
+    default_shift_repeat: -0.02
+    score_noise_scale: 1.0
+    volume_noise_scale: 0.10
+    loan_amount_multiplier: 0.95
+    recovery_shift: 0.0
+    shock_start_week: 16
+    shock_magnitude: 0.12
+
+  noise:
+    description: Higher measurement noise with unstable weekly application volumes.
+    repeat_share_base: 0.35
+    weekly_volume_trend: 0.0
+    seasonal_amplitude: 0.06
+    score_shift_new: 0.0
+    score_shift_repeat: 0.0
+    default_shift_new: 0.04
+    default_shift_repeat: 0.04
+    score_noise_scale: 1.45
+    volume_noise_scale: 0.22
+    loan_amount_multiplier: 1.0
+    recovery_shift: -0.01
+    shock_start_week: null
+    shock_magnitude: 0.0
+
+  split_policy_dynamics:
+    description: New clients deteriorate while repeat clients improve, making split thresholds valuable.
+    repeat_share_base: 0.38
+    weekly_volume_trend: 0.05
+    seasonal_amplitude: 0.05
+    score_shift_new: -0.20
+    score_shift_repeat: 0.10
+    default_shift_new: 0.22
+    default_shift_repeat: -0.10
+    score_noise_scale: 1.0
+    volume_noise_scale: 0.09
+    loan_amount_multiplier: 1.0
+    recovery_shift: 0.03
+    shock_start_week: 14
+    shock_magnitude: 0.06

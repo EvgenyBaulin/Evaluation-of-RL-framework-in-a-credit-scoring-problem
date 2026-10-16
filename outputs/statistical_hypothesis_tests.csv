@@ -1,0 +1,11 @@
+hypothesis,comparison,scenario_name,metric,left,right,n_pairs,mean_left_minus_right,bootstrap_ci_low,bootstrap_ci_high,paired_t_p_value,wilcoxon_p_value
+H1,30D DQN vs 12D DQN,all,cumulative_reward,dqn_30D,dqn_12D,1296,138515.6669828816,124799.77254598112,151556.90172496144,3.0940630729104255e-77,2.173445970709935e-71
+H1,30D DQN vs 20D Double-DQN best-RL frontier,all,cumulative_reward,dqn_30D,double_dqn_20D,1296,284727.7441045808,262630.03141387214,306894.1317218145,5.7690989226121825e-115,2.6177318977688195e-94
+H1,30D DQN vs 50D DQN,all,cumulative_reward,dqn_30D,dqn_50D,1296,662993.0795945558,639440.7727300446,685224.4069825283,0.0,1.8657183858902602e-212
+H1,30D DQN vs 20D Double-DQN best-RL frontier,all,default_rate,dqn_30D,double_dqn_20D,1296,0.007589178487548984,0.007220223705045512,0.007965202314106943,6.822398612907592e-227,1.0047372816959114e-174
+H2,30D best RL vs best overall baseline,all,cumulative_reward,dqn_30D,profit_oriented_30D,1296,-25133.565361461944,-34282.309479800766,-15755.18877755298,2.2793970677445997e-07,4.4162412213886446e-07
+H2,50D best RL vs best overall baseline,all,cumulative_reward,dqn_50D,profit_oriented_50D,1296,-688126.6449560177,-712048.3360199365,-665442.1207341384,0.0,9.677022424842731e-213
+H2,50D DQN vs profit-oriented baseline in base market,base_market,cumulative_reward,dqn_50D,profit_oriented_50D,216,-883695.592357855,-949004.2223979597,-819506.0945257064,7.288871794412214e-71,3.4272972855169963e-37
+H2,30D DQN default rate vs profit-oriented baseline,all,default_rate,dqn_30D,profit_oriented_30D,1296,-0.0008298799832312147,-0.0009905937101602022,-0.0006662056917560667,5.420887072575604e-23,8.793292197121638e-20
+H3,"30D DQN vs static threshold, adverse stress, early horizon",adverse_stress,cumulative_profit_week_6,dqn_30D,static_threshold_30D,216,-853.15567371223,-2567.5183324474833,954.22039207551,0.3451986825090964,0.14506991595515165
+H3,"30D DQN vs static threshold, adverse stress, final horizon",adverse_stress,cumulative_profit_week_25,dqn_30D,static_threshold_30D,216,152941.1641778055,140408.4265298454,166059.11347325187,9.631098079158779e-60,1.4751068056651237e-35
