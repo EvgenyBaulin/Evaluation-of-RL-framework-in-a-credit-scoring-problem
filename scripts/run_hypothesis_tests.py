@@ -17,7 +17,7 @@ def _load_run_level() -> pd.DataFrame:
     for dim in DIMS:
         frame = pd.read_csv(OUTPUTS_DIR / f"dim_{dim}" / "run_level_metrics.csv")
         frame["state_dim"] = dim
-        frame["pair_seed"] = frame["seed"] % 10000
+        frame["pair_seed"] = frame["seed"] % 50000
         frames.append(frame)
     return pd.concat(frames, ignore_index=True)
 
@@ -27,7 +27,7 @@ def _load_weekly() -> pd.DataFrame:
     for dim in DIMS:
         frame = pd.read_csv(OUTPUTS_DIR / f"dim_{dim}" / "weekly_run_metrics.csv")
         frame["state_dim"] = dim
-        frame["pair_seed"] = frame["seed"] % 10000
+        frame["pair_seed"] = frame["seed"] % 50000
         frames.append(frame)
     return pd.concat(frames, ignore_index=True)
 
@@ -195,7 +195,17 @@ def main() -> None:
         _paired_run_comparison(
             run_level,
             hypothesis="H1",
-            comparison="30D DQN vs 20D Double-DQN best-RL frontier",
+            comparison="30D DQN vs 20D DQN",
+            left_dim=30,
+            left_controller="dqn",
+            right_dim=20,
+            right_controller="dqn",
+            metric="cumulative_reward",
+        ),
+        _paired_run_comparison(
+            run_level,
+            hypothesis="H1",
+            comparison="30D DQN vs 20D Double-DQN",
             left_dim=30,
             left_controller="dqn",
             right_dim=20,
@@ -215,7 +225,7 @@ def main() -> None:
         _paired_run_comparison(
             run_level,
             hypothesis="H1",
-            comparison="30D DQN vs 20D Double-DQN best-RL frontier",
+            comparison="30D DQN vs 20D Double-DQN",
             left_dim=30,
             left_controller="dqn",
             right_dim=20,
@@ -225,7 +235,7 @@ def main() -> None:
         _paired_run_comparison(
             run_level,
             hypothesis="H2",
-            comparison="30D best RL vs best overall baseline",
+            comparison="30D DQN vs profit-oriented baseline",
             left_dim=30,
             left_controller="dqn",
             right_dim=30,
@@ -235,7 +245,7 @@ def main() -> None:
         _paired_run_comparison(
             run_level,
             hypothesis="H2",
-            comparison="50D best RL vs best overall baseline",
+            comparison="50D DQN vs profit-oriented baseline",
             left_dim=50,
             left_controller="dqn",
             right_dim=50,
@@ -276,7 +286,7 @@ def main() -> None:
         _weekly_gap_comparison(
             weekly,
             hypothesis="H3",
-            comparison="30D DQN vs static threshold, adverse stress, final horizon",
+            comparison="30D DQN vs static threshold, adverse stress, mid horizon (week 25)",
             state_dim=30,
             controller="dqn",
             baseline="static_threshold",
