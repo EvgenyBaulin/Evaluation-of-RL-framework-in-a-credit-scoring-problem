@@ -52,6 +52,8 @@ pip install -r requirements.txt
 python scripts/check_setup.py
 ```
 
+`requirements-lock.txt` pins the exact versions used for the full-profile run reported in the article. The RL results depend on the `torch` version, so use it to reproduce the published numbers.
+
 ## Reproducing the results
 
 ```bash
@@ -60,13 +62,13 @@ python scripts/run_pipeline.py --state-dim 20 --profile quick
 
 # controlled dimensionality experiment
 python scripts/run_dimensionality_experiment.py --profile quick
-python scripts/run_dimensionality_experiment.py --profile full --device auto --parallelize
+OMP_NUM_THREADS=1 python scripts/run_dimensionality_experiment.py --profile full --device cpu --parallelize-seeds --workers 11
 
 # statistical tests on the produced outputs
 python scripts/run_hypothesis_tests.py
 ```
 
-Profiles are defined in `configs/run_profile.yaml`. The `full` profile (8 seeds, 1500 training episodes, 52-week horizon) took about 9 hours on an Apple M3 Pro with `--parallelize`.
+Profiles are defined in `configs/run_profile.yaml`. The `full` profile (8 seeds, 1500 training episodes, 52-week horizon) took about 3 hours 50 minutes on an Apple M3 Pro with the command above. `--parallelize-seeds` trains and evaluates every (state dimension, seed) pair in its own process and resets the random state for each pair, so its RL numbers differ from the older `--parallelize` mode (one process per dimension); the published numbers come from `--parallelize-seeds`. The small networks run faster on CPU than on MPS.
 
 Optional scripts:
 
@@ -79,11 +81,13 @@ Optional scripts:
 
 ```bash
 cd paper
-pdflatex -interaction=nonstopmode article.tex
-pdflatex -interaction=nonstopmode article.tex
+mkdir -p out
+xelatex -interaction=nonstopmode -halt-on-error -output-directory=out article.tex
+xelatex -interaction=nonstopmode -halt-on-error -output-directory=out article.tex
+cp out/article.pdf article.pdf
 ```
 
-The bibliography is inline, so no BibTeX pass is needed. The `elsarticle` class is required.
+The manuscript is built with XeTeX. The bibliography is inline, so no BibTeX pass is needed; build files stay in the ignored `paper/out/`. The `elsarticle` class is required.
 
 ## Feature sets
 
