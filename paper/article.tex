@@ -2,10 +2,12 @@
 % Submission-ready article retargeted for Expert Systems with Applications (ESWA)
 % Elsevier, single-column preprint/review format (line-numbered, double-spaced).
 %
-% Compile from the paper/ directory (twice for cross-references; no bibtex pass needed
-% because the bibliography is a manual \thebibliography handled by natbib):
-%   pdflatex -interaction=nonstopmode article.tex
-%   pdflatex -interaction=nonstopmode article.tex
+% Compile with XeTeX from the paper/ directory (twice for cross-references; no bibtex pass
+% needed because the bibliography is a manual \thebibliography handled by natbib):
+%   mkdir -p out
+%   xelatex -interaction=nonstopmode -halt-on-error -output-directory=out article.tex
+%   xelatex -interaction=nonstopmode -halt-on-error -output-directory=out article.tex
+%   cp out/article.pdf article.pdf
 
 % ---------------------------------------------------------------------------
 % DOCUMENT CLASS  (Elsevier elsarticle, single-column preprint with review
@@ -82,37 +84,38 @@
         credit-portfolio simulator across six market scenarios and four observation-space
         sizes (12D, 20D, 30D, 50D). Data-driven weekly threshold control is one concrete way
         intelligent systems can improve business lending decisions, because adjusting
-        thresholds to current portfolio and market signals can reduce realized default rates
-        while protecting profit, and this study identifies when such automation pays off. The
-        simulator is a calibrated proof-of-concept test bench, not a substitute for real
-        banking data. Only observation dimensionality varies across the four conditions, with
-        the simulator, reward, seeds, and evaluation protocol held fixed. We find that the
+        thresholds to current portfolio and market signals can protect profit as conditions
+        change, and this study measures how close learned controllers come to well-designed
+        rules. The simulator is a calibrated proof-of-concept test bench, not a substitute for
+        real banking data. Only observation dimensionality varies across the four conditions,
+        with the simulator, reward, seeds, and evaluation protocol held fixed. We find that the
         constraint-aware weekly policy remains the best overall controller by cumulative
-        reward (the primary ranking metric, with realized profit 3{,}802{,}547) and is
-        statistically tied with the profit-oriented policy on realized profit, and RL still
-        does not win the reward ranking in any scenario or dimension. Agents are trained for
-            1{,}500 episodes per seed, a substantially larger budget than a short pilot run, and
-        under this budget the best RL agent closes almost all of the profit gap to the
-        leading baseline, from $-$9.4\% under a short 50-episode budget to between
-        $-$0.5\% (12D, SAC) and $-$2.5\% (30D, DQN), and even wins raw profit in two of six
-        scenarios at 12D (SAC). The strongest RL agent varies by dimension (SAC at 12D and
-        50D, A2C at 20D, DQN at 30D), so no single algorithm dominates across the observation
-        sizes. A controlled state-dimensionality comparison on the canonical DQN agent shows
-        that 30D significantly outperforms both 12D and 50D on cumulative reward, and this is
-        not only a reward effect: the best RL agent undercuts both profit-seeking baselines on
-        default rate in five of six scenarios at 30D and 50D, versus one of six at 20D and
-        zero of six at 12D, so the conditional risk-side advantage of richer state emerges
-        specifically once the observation is rich enough. A delayed-evaluation check in the
-        adverse-stress scenario shows near parity between DQN and the static-threshold
-        baseline early in the horizon and a large, highly significant DQN advantage by the
-        horizon midpoint, supporting a ``locally tied, globally better'' pattern. Episode-static
-        behavior, in which a controller fixes a threshold pair at the start of an episode and
-        barely adjusts it, is no longer universal: it is specific to the DQN family at
-        12--30D, while SAC and the actor-critic agents adjust thresholds within the episode at
-        every dimension. We conclude that, given a sufficient training budget, RL becomes
-        highly competitive with well-designed rule-based weekly threshold search, though the
+        reward (the primary ranking metric, with realized profit 3{,}802{,}547) and is within
+        0.02\% of the profit-oriented policy on realized profit, and RL does
+        not win the reward or the profit ranking in any scenario or dimension. Agents are
+        trained for 1{,}500 episodes per seed, a substantially larger budget than a short
+        pilot run, and under this budget the best RL agent closes most of the profit gap to
+        the leading baseline, from $-$9.4\% under a short 50-episode budget to between
+        $-$1.0\% (12D, SAC) and $-$2.4\% (50D, SAC), with the gap widening as the observation
+        grows. The strongest RL agent varies by dimension (SAC at 12D, 20D, and 50D, A2C at
+        30D), and the margins between the leading RL agents are smaller than their
+        seed-to-seed spread, so no single algorithm dominates. A controlled
+        state-dimensionality comparison on the canonical DQN agent shows an intermediate
+        optimum: cumulative reward rises from 12D to 20D and 30D (20D is significantly ahead
+        of 30D, and 30D of 12D) and collapses at 50D. Richer state does not buy a risk-side
+        advantage: the best RL agent's default rate stays slightly above that of the leading
+        baseline at every dimension, and it undercuts both profit-seeking baselines on default
+        rate in at most two of six scenarios. A delayed-evaluation check in the adverse-stress
+        scenario shows near parity between DQN and the static-threshold baseline early in the
+        horizon and a large, highly significant DQN advantage by the horizon midpoint,
+        supporting a ``locally tied, globally better'' pattern. Episode-static behavior, in
+        which a controller fixes a threshold pair at the start of an episode and barely
+        adjusts it, is no longer universal: it is specific to the DQN family at 12--30D and to
+        PPO, while SAC and the actor-critic agents adjust thresholds within the episode at
+        every dimension. We conclude that, given a sufficient training budget, RL comes within
+        a few percent of well-designed rule-based weekly threshold search on profit, but the
         strongest rule-based policies still win the primary reward ranking in every scenario
-        and dimension tested.
+        and dimension tested, and we find no robust risk-side advantage for RL.
     \end{abstract}
 
     \begin{keyword}
@@ -144,9 +147,9 @@ We build and evaluate an intelligent decision-support module for weekly threshol
 control, and we compare learned (RL) controllers against strong rule-based expert
 policies. Data-driven weekly threshold control is one concrete way artificial
 intelligence can improve business lending decisions. By adjusting acceptance
-thresholds to current portfolio and market signals, it can reduce realized defaults
-while protecting profit, and the present study identifies the conditions under which
-such automation pays off. Reinforcement learning provides a natural framework for
+thresholds to current portfolio and market signals, it can protect profit as conditions
+change, and the present study measures how close learned controllers come to
+well-designed rules and under which conditions. Reinforcement learning provides a natural framework for
 decisions with delayed consequences \citep{arulkumaran2017}. An RL agent observes the
 state of the portfolio, selects a pair of weekly thresholds, and receives a reward
 signal that reflects realized portfolio cash flows rather than immediate cohort
@@ -179,17 +182,18 @@ The central research question is:
     \emph{Under which conditions does reinforcement learning provide a robust improvement
         over rule-based threshold policies in a delayed-outcome credit-scoring environment?}
 \end{quote}
-The data give a conditional answer. Strong rule-based weekly search wins every scenario
-and dimension by the primary reward ranking, and with a training budget large enough for
-the RL agents to approach convergence (1{,}500 episodes per seed) the best RL agent closes
-almost all of the profit gap to the leading baseline and even wins raw profit in two of
-six scenarios at 12D. Richer-state RL agents also produce lower portfolio default rates
-than the profit-seeking baselines in a majority of scenarios once the state is rich enough
-(five of six scenarios at 30D and 50D, versus one of six at 20D and zero of six at 12D),
-while the risk-aware weekly policy stays the single lowest-default controller overall.
-This points to a conditional risk-side advantage that becomes visible once the profit
-ranking is supplemented by credit-quality metrics, and that itself depends on observation
-dimensionality.
+The data give a largely negative answer. Rule-based policies win every scenario and
+dimension by the primary reward ranking (weekly grid search in five scenarios, the static
+threshold under adverse stress) and every scenario by raw profit.
+With a training budget large enough for the RL agents to approach convergence
+(1{,}500 episodes per seed) the best RL agent closes most of the profit gap to the leading
+baseline, to within 1.0--2.4\% depending on the observation size, but it does not overtake
+the baseline anywhere. Nor does richer state produce a risk-side advantage: the best RL
+agent's default rate stays slightly above that of the leading baseline at every
+dimension, and it undercuts both profit-seeking baselines on default rate in at most two
+of six scenarios, while the risk-aware weekly policy stays the single lowest-default
+controller overall. Observation size matters mainly for the value-based reference agent,
+whose reward peaks at an intermediate 20D--30D state and collapses at 50D.
 
 % ===========================================================================
 \section{Related Work}
@@ -507,9 +511,9 @@ reward, then highest profit, then lowest default rate), together with the strong
 controller in each dimension (full-profile run, 8 seeds $\times$ 1{,}500 episodes per
 seed, with data and configuration in the public repository). Unlike under the short
 50-episode budget, the best RL agent is not the same algorithm at every dimension: SAC
-leads at 12D and 50D, A2C at 20D, and DQN at 30D. The best RL profit still peaks at 12D
-and dips at 30D before partially recovering at 50D, but the gap to the leading baseline is
-now small at every dimension.
+leads at 12D, 20D, and 50D, and A2C at 30D. The best RL profit is highest at 12D and
+declines steadily with observation size, but the gap to the leading baseline stays small
+at every dimension.
 
 \begin{table}[t]
     \centering
@@ -532,39 +536,38 @@ now small at every dimension.
         50  & Constraint-aware weekly & baseline & 3{,}802{,}547 & 3{,}666{,}052 & 0.0760       \\
         \midrule
         \multicolumn{6}{l}{\textit{Best RL agent}}                                              \\
-        12  & SAC                     & RL       & 3{,}785{,}010 & 3{,}631{,}406 & 0.0768       \\
-        20  & A2C                     & RL       & 3{,}761{,}562 & 3{,}624{,}570 & 0.0768       \\
-        30  & DQN                     & RL       & 3{,}706{,}594 & 3{,}633{,}945 & 0.0749       \\
-        50  & SAC                     & RL       & 3{,}724{,}499 & 3{,}605{,}339 & 0.0762       \\
+        12  & SAC                     & RL       & 3{,}766{,}009 & 3{,}622{,}122 & 0.0769       \\
+        20  & SAC                     & RL       & 3{,}750{,}108 & 3{,}628{,}740 & 0.0764       \\
+        30  & A2C                     & RL       & 3{,}719{,}303 & 3{,}602{,}141 & 0.0766       \\
+        50  & SAC                     & RL       & 3{,}710{,}014 & 3{,}585{,}105 & 0.0767       \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 By cumulative reward, the primary ranking metric, the constraint-aware weekly policy is
 the best overall controller in every dimension (reward 3{,}666{,}052). On raw realized
-profit it is statistically tied with the profit-oriented policy, which is marginally
-higher (3{,}803{,}168 vs.\ 3{,}802{,}547). The two differ by less than $0.02\%$ and the
-difference is not economically meaningful. The flat baseline row confirms that the
+profit it is marginally below the profit-oriented policy (3{,}803{,}168 vs.\
+3{,}802{,}547). The two differ by less than $0.02\%$; over 576 paired runs the
+difference is statistically detectable ($p<10^{-3}$) but not economically meaningful. The flat baseline row confirms that the
 experiment isolates the effect of observation size on RL quality, because the leading
 rule-based policy is independent of the RL state vector by construction. With the
     1{,}500-episode budget, the profit gap between the best RL agent and the best overall
-controller shrinks to $-$17{,}537 ($-$0.46\%) at 12D, $-$40{,}985 ($-$1.08\%) at 20D,
-$-$95{,}953 ($-$2.52\%) at 30D, and $-$78{,}049 ($-$2.05\%) at 50D, and the corresponding
-reward gaps are $-$34{,}646 ($-$0.95\%), $-$41{,}482 ($-$1.13\%), $-$32{,}108
-($-$0.88\%), and $-$60{,}713 ($-$1.66\%). Every gap is under 2.6\% of the baseline value,
+controller shrinks to $-$36{,}538 ($-$0.96\%) at 12D, $-$52{,}439 ($-$1.38\%) at 20D,
+$-$83{,}244 ($-$2.19\%) at 30D, and $-$92{,}534 ($-$2.43\%) at 50D, and the corresponding
+reward gaps are $-$43{,}930 ($-$1.20\%), $-$37{,}313 ($-$1.02\%), $-$63{,}911
+($-$1.74\%), and $-$80{,}947 ($-$2.21\%). Every gap is under 2.5\% of the baseline value,
 compared with $-$9.4\% for the best RL agent's 12D peak under the short 50-episode
 budget, so the dominant effect of the larger training budget is to close most of the
 RL-to-baseline gap rather than to change which controller wins. Default rate for the best
-RL agent is 7.68\% at 12D, 7.68\% at 20D, 7.49\% at 30D, and 7.62\% at 50D, again lowest
-at 30D, which foreshadows the risk-side pattern developed in
-Section~\ref{sec:scenario-winners}.
+RL agent is 7.69\% at 12D, 7.64\% at 20D, 7.66\% at 30D, and 7.67\% at 50D, slightly above
+the leading baseline's 7.60\% at every dimension.
 
 Figure~\ref{fig:saturation} shows the same comparison as a function of observation
 dimensionality. The figure shows that the best RL agent's profit is close to the leading
-baseline at every dimension, with a shallow dip at 30D, while on default rate the best RL
-agent moves from above the baseline line at 12D and 20D to below it at 30D and 50D --
-richer state does not change who wins the reward ranking, but it does change whether RL's
-default rate is competitive with the profit-seeking baselines.
+baseline at every dimension but drifts further below it as the observation grows, while
+on default rate the best RL agent stays above the baseline line at every dimension, by
+between 0.04 and 0.09 percentage points. Richer state therefore changes neither who wins
+the reward ranking nor the sign of RL's default-rate gap.
 
 \begin{figure}[t]
     \centering
@@ -574,8 +577,9 @@ default rate is competitive with the profit-seeking baselines.
         profit. \textit{Right}: default rate. The best overall controller (the
         constraint-aware weekly policy) is independent of the RL state vector and is
         therefore flat across dimensions, while the best RL agent (labelled per point: SAC
-        at 12D and 50D, A2C at 20D, DQN at 30D) sits close to the baseline on profit at every
-        dimension and crosses below the baseline on default rate at 30D and 50D.}
+        at 12D, 20D, and 50D, A2C at 30D) sits close to the baseline on profit, with a gap
+        that widens with dimension, and slightly above the baseline on default rate at every
+        dimension.}
     \label{fig:saturation}
 \end{figure}
 
@@ -587,7 +591,7 @@ dimensions is summarised alongside the three principal rule-based baselines (ful
 run, 1{,}500 training episodes per seed). With this larger budget the RL ranking is very
 different from a short-budget run: SAC leads all RL agents on mean profit and comes
 within 2.7\% of the best baseline's mean profit, PPO remains the weakest and most
-degenerate agent, and the DQN family is no longer the strongest RL agent on average even
+degenerate agent, and the DQN family is not the strongest RL agent on average even
 though it supplies the canonical reference agent for the hypothesis tests in
 Section~\ref{sec:stat-tests}.
 
@@ -607,23 +611,23 @@ Section~\ref{sec:stat-tests}.
         Constraint-aware weekly & baseline & 3{,}802{,}547 & 7.60\%       & 94.84\%  \\
         Static-threshold        & baseline & 3{,}083{,}370 & 6.62\%       & 69.99\%  \\
         \midrule
-        SAC                     & RL       & 3{,}700{,}732 & 7.64\%       & 92.58\%  \\
+        SAC                     & RL       & 3{,}702{,}324 & 7.65\%       & 92.69\%  \\
         A2C                     & RL       & 3{,}607{,}319 & 7.59\%       & 90.12\%  \\
-        A3C                     & RL       & 3{,}472{,}312 & 7.17\%       & 83.28\%  \\
-        DQN                     & RL       & 3{,}393{,}809 & 7.36\%       & 82.68\%  \\
-        Double-DQN              & RL       & 3{,}390{,}977 & 7.24\%       & 81.97\%  \\
+        A3C                     & RL       & 3{,}320{,}193 & 7.02\%       & 78.48\%  \\
+        DQN                     & RL       & 3{,}262{,}483 & 7.15\%       & 79.18\%  \\
+        Double-DQN              & RL       & 3{,}131{,}792 & 7.16\%       & 74.99\%  \\
         PPO                     & RL       & 2{,}617{,}957 & 6.21\%       & 57.16\%  \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-SAC leads all RL agents on mean profit (3{,}700{,}732), only 2.7\% below the leading
+SAC leads all RL agents on mean profit (3{,}702{,}324), only 2.7\% below the leading
 baseline's mean profit (3{,}803{,}168), a striking change from the $-$9.4\% gap of the
-best RL agent under a short 50-episode budget. A2C is a close second (3{,}607{,}319).
-DQN and Double-DQN, the two off-policy value-based agents, are now mid-table on mean
-profit (3{,}393{,}809 and 3{,}390{,}977) despite DQN winning outright at 30D
-(Table~\ref{tab:best-by-dim}), which shows that a 30D-specific advantage does not carry
-over to the other three dimensions for this agent family. PPO remains the weakest and
+best RL agent under a short 50-episode budget. A2C is second (3{,}607{,}319). DQN and
+Double-DQN, the two off-policy value-based agents, are in the lower half of the table on
+mean profit (3{,}262{,}483 and 3{,}131{,}792), mostly because of a collapse at 50D, where
+DQN's profit falls to 2{,}389{,}264 from 3{,}597{,}632 at 30D; DQN is not the best RL
+agent at any dimension (Table~\ref{tab:best-by-dim}). PPO remains the weakest and
 most degenerate RL agent: its profit, default rate, and approval rate are numerically
 identical across 12D, 20D, 30D, and 50D (2{,}617{,}957 profit at every dimension), which
 means PPO converges to the same policy regardless of the additional observation features
@@ -637,16 +641,16 @@ axis rather than a free improvement from any single agent.
 \label{sec:scenario-winners}
 
 In Table~\ref{tab:scenario-winners}, the reward-based, profit-based, and
-lowest-default-rate winner for each scenario at the 50D configuration is reported. No
-single metric identifies one controller as best, because the reward, profit, and
-default-rate winners differ across scenarios.
+lowest-default-rate winner for each scenario is reported; the winners are identical at
+all four dimensions. No single metric identifies one controller as best, because the
+reward, profit, and default-rate winners differ across scenarios.
 
 \begin{table}[t]
     \centering
     \small
-    \caption{Scenario-level winners at 50D state (full-profile run, 1{,}500 training
-        episodes per seed; the reward and default columns hold at every dimension, the
-        profit column holds at 20D/30D/50D, see text for the 12D exception).
+    \caption{Scenario-level winners (full-profile run, 1{,}500 training episodes per seed;
+        all three columns are identical at 12D, 20D, 30D, and 50D, and every winner is a
+        rule-based policy).
         \textit{Reward winner}: highest cumulative shaped reward. \textit{Profit winner}:
         highest realized profit. \textit{Default winner}: lowest default rate. The
         risk-aware weekly policy is the single lowest-default controller in every scenario
@@ -667,28 +671,25 @@ default-rate winners differ across scenarios.
     \end{tabular}
 \end{table}
 
-RL wins zero of six scenarios by reward at every dimension, and zero of six by profit at
-20D, 30D, and 50D. At 12D, however, SAC wins raw profit in two of six scenarios
-(class\_imbalance\_shift, by 4{,}248, and drift, by 802, both narrow margins against the
-profit-oriented policy), the only dimension at which an RL agent tops the profit column
-for any scenario. The profit-oriented policy wins raw profit in the remaining scenarios
-at every dimension, which is why the headline ``best overall'' ranking, based on
-cumulative reward, and the profit ranking need not coincide.
+RL wins zero of six scenarios by reward and zero of six by profit at every dimension.
+The profit-oriented policy wins raw profit in five scenarios and the constraint-aware
+weekly policy in adverse\_stress, while the reward winner is the profit-oriented,
+constraint-aware weekly, or static-threshold policy depending on the scenario, which is
+why the headline ``best overall'' ranking, based on cumulative reward, and the profit
+ranking need not coincide.
 
-The default-rate advantage of the best RL agent over the two profit-seeking baselines
-(profit-oriented and constraint-aware weekly) is strongly dimension-dependent. Counting
+The best RL agent also shows no systematic default-rate advantage over the two
+profit-seeking baselines (profit-oriented and constraint-aware weekly). Counting
 per-scenario wins against \emph{both} profit-seeking baselines simultaneously, the best
-RL agent undercuts them in 0 of 6 scenarios at 12D (SAC), 1 of 6 at 20D (A2C, in the
-noise scenario only), and 5 of 6 at both 30D (DQN) and 50D (SAC), losing only in
-adverse\_stress at every dimension. So the ``richer-state RL undercuts the profit-seeking
-baselines on default rate'' pattern is not a property of RL in general: it appears once
-the observation is rich enough (30D and above) and is essentially absent at 12D and weak
-at 20D. The risk-aware weekly policy remains the single lowest-default controller in
-every scenario at every dimension (Table~\ref{tab:scenario-winners}). This result has
-direct practical significance: a portfolio manager willing to accept a small profit
-reduction in exchange for capital conservation may prefer a 30D-or-larger RL policy over
-the profit-seeking baselines, but should not expect the same benefit from a 12D or 20D
-RL deployment.
+RL agent undercuts them in 0 of 6 scenarios at 12D (SAC), 2 of 6 at 20D (SAC, in the
+noise and split\_policy\_dynamics scenarios), 1 of 6 at 30D (A2C, noise), and 1 of 6 at
+50D (SAC, noise). The only recurring case is the noise scenario, and the count does not
+grow with observation size, so richer state does not turn RL into a lower-risk
+alternative to the profit-seeking baselines. The risk-aware weekly policy remains the
+single lowest-default controller in every scenario at every dimension
+(Table~\ref{tab:scenario-winners}), at the cost of far lower approval and profit. For a
+portfolio manager who values capital conservation, the relevant comparison is therefore
+between rule-based policies with different risk settings, not between RL and rules.
 
 \subsection{Statistical Hypothesis Tests}
 \label{sec:stat-tests}
@@ -696,16 +697,22 @@ RL deployment.
 In Table~\ref{tab:stat-tests}, the paired statistical comparisons for the three
 hypotheses of Section~\ref{sec:hypotheses} are summarised, all computed on the
 full-profile run (1{,}500 training episodes per seed), with the paired run-level and
-weekly-trajectory data in the public repository. The tests confirm that 30D
-significantly beats both 12D and 50D, that RL (represented by the reference DQN agent) is
-still significantly weaker than the profit-oriented baseline on reward at 30D and 50D
-though the 30D gap is now small, and that the RL deficit under stress reverses well
-before the end of the horizon. The dimensionality hypotheses are tested on vanilla
-\textbf{DQN}, used here as the canonical discrete-action reference agent for the
-controlled state-size comparison; DQN wins outright at 30D (Table~\ref{tab:best-by-dim})
-but is not the best mean RL agent overall (Table~\ref{tab:agent-summary}, where SAC
+weekly-trajectory data in the public repository. The tests show that the reference
+agent's reward peaks at an intermediate state (20D ahead of 30D, 30D ahead of 12D and far
+ahead of 50D), that RL (represented by the reference DQN agent) is significantly weaker
+than the profit-oriented baseline on reward at 30D and 50D, and that the RL deficit under
+stress reverses well before the end of the horizon. The dimensionality hypotheses are
+tested on vanilla \textbf{DQN}, used here as the canonical discrete-action reference agent
+for the controlled state-size comparison; DQN is not the best RL agent at any dimension
+(Table~\ref{tab:best-by-dim}) or on average (Table~\ref{tab:agent-summary}, where SAC
 leads), so DQN is used consistently as the fixed reference rather than as a claim that it
-is the strongest agent.
+is the strongest agent. Each paired observation matches the two controllers on training
+seed, scenario, and evaluation run index. In the H1 comparisons both sides are RL agents
+evaluated on identical environment seeds, so each difference is taken on the same
+simulated market draws. In the H2 and H3 comparisons the rule-based baseline is evaluated
+on environment seeds offset by a fixed constant from the agent's, so these pairs are
+matched by index rather than on common random numbers, and the pairing does not remove
+market-draw noise from these differences.
 
 \begin{table}[t]
     \centering
@@ -719,52 +726,57 @@ is the strongest agent.
         bootstrap.}
     \label{tab:stat-tests}
     \setlength{\tabcolsep}{4pt}
-    \begin{tabular}{l >{\raggedright\arraybackslash}p{0.34\textwidth} l r r r}
+    \begin{tabular}{l >{\raggedright\arraybackslash}p{0.21\textwidth} l r r r}
         \toprule
         Hyp. & Paired comparison                               & Metric & Mean diff.   & 95\% CI                      & $p$          \\
         \midrule
-        H1   & 30D DQN $-$ 12D DQN                             & Reward & +138{,}516   & [+124{,}800, +151{,}557]     & $<\!10^{-3}$ \\
-        H1   & 30D DQN $-$ 50D DQN                             & Reward & +662{,}993   & [+639{,}441, +685{,}224]     & $<\!10^{-3}$ \\
-        H2   & 30D DQN $-$ Profit-oriented                     & Reward & $-$25{,}134  & [$-$34{,}282, $-$15{,}755]   & $<\!10^{-3}$ \\
-        H2   & 50D DQN $-$ Profit-oriented                     & Reward & $-$688{,}127 & [$-$712{,}048, $-$665{,}442] & $<\!10^{-3}$ \\
-        H3   & DQN $-$ Static-threshold (week~6, early)        & Profit & $-$853       & [$-$2{,}568, +954]           & 0.345        \\
-        H3   & DQN $-$ Static-threshold (week~25, mid-horizon) & Profit & +152{,}941   & [+140{,}408, +166{,}059]     & $<\!10^{-3}$ \\
+        H1   & 30D DQN $-$ 12D DQN                             & Reward & +54{,}056      & [+33{,}245, +74{,}534]           & $<\!10^{-3}$ \\
+        H1   & 30D DQN $-$ 20D DQN                             & Reward & $-$71{,}104    & [$-$98{,}737, $-$44{,}861]       & $<\!10^{-3}$ \\
+        H1   & 30D DQN $-$ 50D DQN                             & Reward & +976{,}844     & [+892{,}740, +1{,}065{,}462]     & $<\!10^{-3}$ \\
+        H2   & 30D DQN $-$ Profit-oriented                     & Reward & $-$121{,}769   & [$-$150{,}029, $-$95{,}145]      & $<\!10^{-3}$ \\
+        H2   & 50D DQN $-$ Profit-oriented                     & Reward & $-$1{,}098{,}613 & [$-$1{,}180{,}137, $-$1{,}020{,}014] & $<\!10^{-3}$ \\
+        H3   & DQN $-$ Static-threshold (week~6, early)        & Profit & $-$1{,}032     & [$-$3{,}407, +1{,}426]           & 0.414        \\
+        H3   & DQN $-$ Static-threshold (week~25, mid-horizon) & Profit & +124{,}995     & [+96{,}224, +153{,}126]          & $<\!10^{-3}$ \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 \textbf{H1} (richer state improves RL up to an intermediate representation) is
-\emph{fully supported} on the reference agent, a reversal from the short-budget run. The
-30D~to~12D reward difference is now positive and highly significant
-($p<10^{-3}$, mean $+138{,}516$, $n=1{,}296$ paired runs), so 30D reliably beats 12D under
-the larger training budget. The 30D~to~50D comparison remains highly significant
-($p<10^{-3}$, mean $+662{,}993$, an even larger margin than before), which confirms that
-50D reliably underperforms 30D. A supplementary check against the 20D best-RL frontier
-(Double-DQN) tells a more nuanced story: 30D DQN beats 20D Double-DQN on reward
-($+284{,}728$, $p<10^{-3}$) but has a significantly \emph{higher} default rate by 0.76
-percentage points ($p<10^{-3}$), so the 30D advantage over 20D is a reward-side, not a
-risk-side, result on this specific pairing.
+\emph{partially supported}: the reference agent gains from a richer state up to an
+intermediate size and loses heavily beyond it, but the optimum lies at 20D rather than
+30D. The 30D~to~12D reward difference is positive and highly significant
+($p<10^{-3}$, mean $+54{,}056$, $n=576$ paired runs), so 30D reliably beats 12D under the
+larger training budget. The 30D~to~20D difference, however, is significantly
+\emph{negative} ($-71{,}104$, $p<10^{-3}$), so the lagged and rolling memory added at 30D
+does not improve on the 20D economic context for this agent. The 30D~to~50D comparison is
+highly significant by a wide margin ($+976{,}844$, $p<10^{-3}$), which confirms that 50D
+reliably underperforms the intermediate states. A supplementary check against 20D
+Double-DQN (the other value-based agent) gives a mixed picture: 30D DQN beats 20D Double-DQN on reward ($+395{,}097$,
+$p<10^{-3}$) but has a significantly \emph{higher} default rate by 0.33 percentage points
+($p<10^{-3}$). On the best-RL frontier (Table~\ref{tab:best-by-dim}), H1 is not supported:
+the best RL profit declines from 12D to 50D and the best RL reward is nearly flat.
 
-\textbf{H2} (RL does not universally dominate) remains confirmed, but the margin now
-depends heavily on dimension. The 30D DQN agent is significantly weaker than the
-profit-oriented policy on reward, but by only $-$25{,}134 ($p<10^{-3}$, a 0.7\% gap),
-down from $-$368{,}145 under the short-budget run. The 50D DQN agent, in contrast, trails
-by $-$688{,}127 ($p<10^{-3}$), a large gap that reflects DQN's comparatively weak mean
-performance at 50D (Table~\ref{tab:agent-summary}) rather than a property of RL at 50D in
-general, since SAC is the best RL agent at 50D and comes much closer to the baseline
-(Table~\ref{tab:best-by-dim}). On the risk side, 30D DQN has a significantly \emph{lower}
-default rate than the profit-oriented policy ($-$0.083 percentage points, $p<10^{-3}$),
-consistent with the scenario-level pattern in Section~\ref{sec:scenario-winners}.
+\textbf{H2} (RL does not universally dominate) remains confirmed. The 30D DQN agent is
+significantly weaker than the profit-oriented policy on reward, by $-$121{,}769
+($p<10^{-3}$, a 3.3\% gap), down from $-$368{,}145 under the short-budget run. The 50D DQN
+agent trails by $-$1{,}098{,}613 ($p<10^{-3}$), a large gap that reflects DQN's collapse
+at 50D (Table~\ref{tab:agent-summary}) rather than a property of RL at 50D in general,
+since SAC is the best RL agent at 50D and comes much closer to the baseline
+(Table~\ref{tab:best-by-dim}). 30D DQN has a significantly \emph{lower} default rate than
+the profit-oriented policy ($-$0.24 percentage points, $p<10^{-3}$), but it buys this with
+a lower approval rate (88.6\% versus 94.9\%) and lower profit (3{,}597{,}632 versus
+3{,}803{,}168), so it is a move along the approval--risk trade-off rather than a free
+risk-side improvement.
 
 \textbf{H3} (delayed evaluation changes rankings, ``locally worse globally better'') is
 \emph{supported}, and more strongly than under the short-budget run. The H3 checkpoints
 are computed directly on the full-profile dim-30 run's weekly trajectories in the
-adverse\_stress scenario ($n=216$ paired observations at each checkpoint), not on a
+adverse\_stress scenario ($n=96$ paired observations at each checkpoint), not on a
 separate development profile. At the early checkpoint (interactive week~6) DQN is
-statistically indistinguishable from the static-threshold baseline (profit gap $-853$,
-$p=0.345$), essentially tied rather than trailing. By week~25, roughly the midpoint of
-the 52-week interactive horizon, DQN has opened a large and highly significant advantage
-over the static baseline (profit gap $+152{,}941$, $p<10^{-3}$). The pattern is therefore
+statistically indistinguishable from the static-threshold baseline (profit gap
+$-1{,}032$, $p=0.414$), essentially tied rather than trailing. By week~25, roughly the
+midpoint of the 52-week interactive horizon, DQN has opened a large and highly
+significant advantage over the static baseline (profit gap $+124{,}995$, $p<10^{-3}$). The pattern is therefore
 ``locally tied, globally better'' rather than the persistent deficit found under the
 short-budget run: the RL agent's advantage under stress accumulates over the horizon as
 delayed outcomes settle, and it is already decisive well before the horizon ends, which
@@ -783,69 +795,86 @@ advantage is structural: they evaluate each action directly on the current week'
 economics, they see the realized profit and default signals immediately, and they set
 thresholds according to an explicit objective, so they need no training at all. Raising
 the training budget from 50 to 1{,}500 episodes per seed closes most, but not all, of the
-gap: the best RL agent's profit shortfall shrinks from $-$9.4\% to between $-$0.5\% and
-$-$2.5\% depending on dimension (Table~\ref{tab:best-by-dim}), and the reference DQN
+gap: the best RL agent's profit shortfall shrinks from $-$9.4\% to between $-$1.0\% and
+$-$2.4\% depending on dimension (Table~\ref{tab:best-by-dim}), and the reference DQN
 agent's reward deficit against the profit-oriented policy at 30D falls from
-$-$368{,}145 to $-$25{,}134 (Section~\ref{sec:stat-tests}). This shows that training
+$-$368{,}145 to $-$121{,}769 (Section~\ref{sec:stat-tests}). This shows that training
 budget, not some fundamental ceiling on RL, was the dominant factor behind the earlier
-short-budget gap. What remains after 30$\times$ more training is a much smaller, but still
-statistically significant, residual gap on every scenario and dimension tested, consistent
-with a genuine structural advantage for direct weekly evaluation over a learned value
+short-budget gap. What remains after 30$\times$ more training is a much smaller residual
+gap that has the same sign in every scenario and dimension tested and is significant when
+pooled over scenarios, although in several individual scenarios at 12D and 20D it is no
+longer statistically significant. This is consistent with a genuine structural advantage for direct weekly evaluation over a learned value
 function under delayed, noisy rewards, rather than an artifact of undertraining.
 
-\subsection{The Conditional Value of RL}
+\subsection{No Robust Risk-Side Advantage for RL}
 
-Whether RL agents undercut the two profit-seeking baselines on default rate is strongly
-dimension-dependent, not a general property of RL. Counting scenarios in which the best
-RL agent beats both the profit-oriented and constraint-aware weekly policies on default
-rate simultaneously, the pattern is 0 of 6 scenarios at 12D, 1 of 6 at 20D, and 5 of 6 at
-both 30D and 50D (Section~\ref{sec:scenario-winners}); the risk-aware weekly policy
-remains the lowest-default controller overall in every case
-(Table~\ref{tab:scenario-winners}). A portfolio manager who values capital conservation
-should therefore not expect a risk-side benefit from a 12D or 20D RL deployment, but may
-accept a modest profit reduction in exchange for a real risk-side improvement once the
-observation is rich enough (30D or larger). This portfolio-quality advantage is not
-visible in the headline reward metric, and it is conditional on both the training budget
-and the observation dimensionality, not on RL as a method in general.
+A natural hope is that RL, even when it trails on profit, buys a lower default rate. The
+data do not support this. The best RL agent's mean default rate is slightly above that of
+the leading baseline at every dimension (Table~\ref{tab:best-by-dim}), and counting
+scenarios in which the best RL agent beats both the profit-oriented and constraint-aware
+weekly policies on default rate simultaneously gives 0 of 6 at 12D, 2 of 6 at 20D, and 1
+of 6 at both 30D and 50D (Section~\ref{sec:scenario-winners}), almost always in the noise
+scenario. Where an RL agent does post a lower default rate, as 30D DQN does against the
+profit-oriented policy (Section~\ref{sec:stat-tests}), it approves fewer applicants and
+earns less, which is the same approval--risk trade-off that the rule-based policies
+already span: the risk-aware weekly policy remains the lowest-default controller in every
+scenario at every dimension (Table~\ref{tab:scenario-winners}). A portfolio manager who
+values capital conservation can therefore obtain it more cheaply by tuning a rule-based
+policy than by deploying RL in this setting.
+
+\subsection{Sensitivity of the RL Ranking}
+\label{sec:rl-sensitivity}
+
+The ranking among the leading RL agents within a dimension is not robust. Across the
+eight training seeds, the standard deviation of a best RL agent's per-seed mean profit is
+between 59{,}359 (SAC, 20D) and 192{,}933 (A2C, 30D), against 12{,}113 for the
+constraint-aware weekly baseline, whose per-seed variation reflects only evaluation
+noise. The margins that decide the best RL agent are often smaller than this spread: at
+20D, A2C trails SAC by 4{,}170 in reward but leads it by 11{,}453 in profit. The
+identity of the best RL agent at a given dimension should therefore be read as
+indicative, whereas the conclusion that RL trails the best rule-based policy holds in
+every scenario at every dimension.
 
 \subsection{Dimensionality Saturation}
 
 The 30D state adds lagged and rolling history (second-lag approval, default, and profit
 values, four-week rolling means and standard deviations, and lagged threshold changes).
-This temporal context is what a controller needs under slow-moving drift or noisy volume
-signals, namely the ability to compare this week with the recent past. The 50D state adds
+In principle this temporal context helps under slow-moving drift or noisy volume
+signals, because it lets a controller compare this week with the recent past. The 50D
+state adds
 richer segmentation and stability descriptors, but those extra features require more
 optimization work and offer diminishing marginal information at the current training
-budget. With the larger, 1{,}500-episode budget, 30D is no longer only a risk-side
-compromise: it is now the reward-side optimum for the reference DQN agent as well, since
-30D significantly beats \emph{both} 12D and 50D on cumulative reward
-(Section~\ref{sec:stat-tests}), a stronger result than the earlier short-budget run, in
-which 30D beat only 50D and was statistically indistinguishable from 12D. The result is
-that 30D is the most balanced point on the \emph{risk-and-information} axis: it delivers
-more temporal memory than 12D while avoiding the regression that 50D introduces for the
-DQN family, and it is the only dimension at which the reference agent's own reward peaks.
-The best-per-dimension profit picture is more mixed, since SAC (not DQN) is the strongest
-agent at 12D and 50D and edges out DQN's 30D profit in absolute terms
-(Table~\ref{tab:best-by-dim}), so the case for 30D as a default rests on the
-reference-agent reward result and the risk-side benefit developed above, not on every
-algorithm peaking there.
+budget. In practice, for the reference DQN agent the reward optimum lies at 20D: 20D
+beats 30D, 30D beats 12D, and 50D falls far behind all three
+(Section~\ref{sec:stat-tests}). The 20D
+layer adds the current economic context (expected profit and NPV per application, capital
+headroom, the realized-versus-expected default gap), which bears directly on the weekly
+decision, whereas the lagged and rolling memory added at 30D brings no further gain for
+this agent, and the segment and stability descriptors added at 50D make the value
+function markedly harder to learn at the same budget. Saturation is algorithm-dependent,
+however: the best-per-dimension profit declines steadily from 12D to 50D, SAC remains
+competitive at every size, and A2C peaks at 20D--30D (Table~\ref{tab:best-by-dim}), so
+there is no single dimension at which every algorithm peaks. The clearest effect is at the
+top of the range: from 30D to 50D the DQN family loses heavily and A2C loses moderately,
+while SAC and A3C are unaffected or gain slightly, so the 50D features help only the
+agents that already handle larger inputs well.
 
 \subsection{Episode-Static RL Behavior}
 \label{sec:episode-static}
 
 Under the short 50-episode budget, every best-per-dimension RL agent had threshold
 volatility of 0.00, and the finding was that RL policies are uniformly episode-static.
-Under the larger 1{,}500-episode budget this is no longer true: three of the four
+Under the larger 1{,}500-episode budget this is no longer true: all four
 best-per-dimension agents show real within-episode threshold adjustment (SAC at 12D,
-volatility 2.10; A2C at 20D, 1.27; SAC at 50D, 4.20), and only DQN at 30D remains exactly
-static (0.00). Looking at all six agents across all four dimensions, the pattern is
-algorithm-specific rather than dimension-specific: DQN and Double-DQN (the two off-policy,
-greedy value-based agents) stay at 0.00 threshold volatility at 12D, 20D, and 30D and only
-begin adjusting thresholds within the episode at 50D (volatility 4.94 and 4.98
-respectively); PPO remains at 0.00 at every dimension, consistent with its degenerate,
-dimension-invariant policy (Section~\ref{sec:agent-comparison}); while SAC and the two
-actor-critic agents (A2C, A3C) show nonzero within-episode adjustment at every dimension,
-generally increasing with state size for SAC (2.10 at 12D up to 4.20 at 50D). Episode-static
+volatility 2.05; SAC at 20D, 3.47; A2C at 30D, 1.46; SAC at 50D, 4.72). Looking at all six
+agents across all four dimensions, the pattern is algorithm-specific rather than
+dimension-specific: DQN and Double-DQN (the two off-policy, greedy value-based agents)
+stay at 0.00 threshold volatility at 12D, 20D, and 30D and only begin adjusting
+thresholds within the episode at 50D (volatility 3.81 and 2.77 respectively); PPO remains
+at 0.00 at every dimension, consistent with its degenerate, dimension-invariant policy
+(Section~\ref{sec:agent-comparison}); while SAC and the two actor-critic agents (A2C,
+A3C) show nonzero within-episode adjustment at every dimension, increasing with state
+size for SAC (2.05 at 12D up to 4.72 at 50D). Episode-static
 behavior is therefore a property of the DQN family's greedy, off-policy exploitation at
 low-to-moderate dimensionality, not a general RL phenomenon: entropy-regularized and
 on-policy actor-critic agents adapt within the episode throughout, and even the DQN family
@@ -860,24 +889,24 @@ For a lending business the results translate into concrete guidance.
 \begin{itemize}
     \item Training budget matters more than the choice between RL and rule-based search:
           moving from 50 to 1{,}500 training episodes per seed cut the best RL agent's
-          profit shortfall from $-$9.4\% to under $-$2.6\% at every dimension, so an
+          profit shortfall from $-$9.4\% to under $-$2.5\% at every dimension, so an
           institution considering RL should budget for substantial training before judging
           the approach on results from a short pilot run.
-    \item The weekly grid-search controller (the constraint-aware or profit-oriented
-          weekly policy) still wins the primary reward ranking in every scenario and
-          dimension and needs no training, so it remains the safe default when training
-          resources or validation time are limited.
-    \item Adopt an RL controller, specifically at 30D or 50D, when the institution values
-          default-rate reduction and can accept a small profit trade-off, because only at
-          these dimensions does the best RL agent undercut both profit-seeking baselines on
-          default rate in a majority of scenarios (5 of 6); the same benefit should not be
-          expected at 12D (0 of 6) or 20D (1 of 6).
-    \item Use a 30D state as a sensible default when RL is deployed: it is the only
-          dimension at which the reference DQN agent's own reward peaks, it supports the
-          risk-side benefit above, and it avoids the regression that 50D introduces for the
-          DQN family. If SAC or an actor-critic agent is preferred instead of DQN, 12D or
-          50D are also strong candidates, since the best per-dimension agent varies by
-          algorithm.
+    \item Rule-based policies still win the primary reward ranking in every scenario and
+          dimension (the constraint-aware or profit-oriented weekly grid search in five
+          scenarios, the static threshold under adverse stress) and need no training, so
+          they remain the safe default when training resources or validation time are
+          limited.
+    \item Do not expect RL to lower the default rate for free: in this setting the best
+          RL agent's default rate is slightly above the leading baseline's at every
+          dimension, and an institution that values default-rate reduction can obtain it
+          more directly by tuning the risk settings of a rule-based weekly policy.
+    \item If RL is deployed, prefer a compact or intermediate state (12D--30D) and an
+          agent that handles it robustly (SAC or A2C here). Larger observation vectors
+          bring no profit gain at this training budget and can severely degrade
+          value-based agents (DQN at 50D), and because the best agent at a given size
+          varies with the training seed, several seeds should be trained and compared
+          before choosing one.
 \end{itemize}
 
 \subsection{Limitations}
@@ -893,7 +922,11 @@ for future work. Fourth, bootstrap confidence intervals quantify simulation unce
 not real-world external validity. Fifth, the H3 delayed-evaluation check is reported for
 a single scenario (adverse\_stress) and a single dimension (30D); whether the same
 ``locally tied, globally better'' pattern holds in other scenarios and dimensions is left
-for future work.
+for future work. Sixth, eight training seeds are enough to separate RL from the leading
+baselines but not to rank the leading RL agents against each other reliably
+(Section~\ref{sec:rl-sensitivity}), and the RL results depend on network initialisation
+and on the deep-learning library version, which is why the repository records the exact
+package versions used.
 
 These results are bounded by the synthetic setting. The default and recovery parameters are calibrated to aggregate statistics rather than fitted to a single proprietary book, so the absolute profit and default levels should be read as order-of-magnitude rather than exact. Even at 1{,}500 training episodes per seed, a still larger budget could narrow the residual RL-to-baseline gap further, so the comparison in this paper should be read as ``RL under a substantial, but not unlimited, training budget'' rather than as an asymptotic comparison. The real-data comparison validates the score-to-default relationship and the parameter ranges, but it does not validate the weekly threshold dynamics directly, which would require a lender to deploy and log a controlled threshold policy.
 
@@ -955,30 +988,28 @@ episodes per seed. The main empirical findings are:
 \begin{enumerate}[leftmargin=*,label=(\arabic*)]
     \item The constraint-aware weekly policy remains the best overall controller in every
           dimension by cumulative reward (reward 3{,}666{,}052). On raw realized profit it
-          is statistically tied with the profit-oriented policy (3{,}802{,}547 vs.\
+          is within 0.02\% of the profit-oriented policy (3{,}802{,}547 vs.\
           3{,}803{,}168, the latter marginally higher). RL wins zero of six scenarios by
-          reward across all dimensions, and zero of six by profit at 20D, 30D, and 50D, but
-          two of six at 12D (SAC beats the profit-oriented policy in
-          class\_imbalance\_shift and drift, by narrow margins).
-    \item The best RL agent is not a single algorithm: SAC leads at 12D (profit
-              3{,}785{,}010) and 50D (3{,}724{,}499), A2C at 20D (3{,}761{,}562), and DQN at
-          30D (3{,}706{,}594). The profit gap to the best overall controller shrinks to
-          between $-$0.46\% (12D) and $-$2.52\% (30D) at every dimension, down from
+          reward and zero of six by profit at every dimension.
+    \item The best RL agent is not a single algorithm: SAC leads at 12D, 20D, and 50D
+          (profit 3{,}766{,}009, 3{,}750{,}108, and 3{,}710{,}014), and A2C leads at 30D
+          (3{,}719{,}303). The profit gap to the best overall controller shrinks to between
+          $-$0.96\% (12D) and $-$2.43\% (50D), widening with dimension, down from
           $-$9.4\% for the best RL agent (Double-DQN, 12D) under a 30$\times$ smaller
-          training budget.
-    \item The 30D~to~12D reward improvement for the reference DQN agent is now positive
-          \emph{and} statistically significant ($+138{,}516$, $p<10^{-3}$), a reversal from
-          the short-budget run, and 30D continues to significantly outperform 50D
-          ($+662{,}993$, $p<10^{-3}$), so 30D is the reward-side optimum for this reference
-          agent, not only a risk-side compromise.
-    \item The best RL agent undercuts the two profit-seeking baselines on default rate in a
-          majority of scenarios (5 of 6) at 30D and 50D, but this risk-side advantage is
-          weak at 20D (1 of 6) and absent at 12D (0 of 6); the risk-aware weekly policy
-          stays the lowest-default controller overall at every dimension. The conditional
-          risk-side advantage of RL is therefore dimension-dependent, not universal.
+          training budget. The margins between the leading RL agents are smaller than their
+          seed-to-seed spread, so this ranking is indicative only.
+    \item For the reference DQN agent, reward peaks at an intermediate state: 30D beats
+          12D ($+54{,}056$, $p<10^{-3}$), 20D beats 30D ($+71{,}104$, $p<10^{-3}$), and 50D
+          falls far behind ($-976{,}844$ against 30D, $p<10^{-3}$). H1 is therefore
+          partially supported, with the optimum at 20D rather than 30D.
+    \item RL shows no robust risk-side advantage: the best RL agent's default rate is
+          slightly above the leading baseline's at every dimension, and it undercuts both
+          profit-seeking baselines in at most two of six scenarios (0, 2, 1, and 1 of 6 at
+          12D, 20D, 30D, and 50D); the risk-aware weekly policy stays the lowest-default
+          controller overall at every dimension.
     \item A delayed-evaluation check in the adverse-stress scenario shows DQN statistically
-          tied with the static-threshold baseline early in the horizon (week~6, $p=0.345$)
-          and significantly ahead by the horizon midpoint (week~25, $+152{,}941$,
+          tied with the static-threshold baseline early in the horizon (week~6, $p=0.414$)
+          and significantly ahead by the horizon midpoint (week~25, $+124{,}995$,
           $p<10^{-3}$), a ``locally tied, globally better'' pattern, the opposite of the
           persistent early-and-late deficit found under the short-budget run.
     \item Episode-static behavior, in which threshold volatility is 0.00 throughout the
@@ -991,19 +1022,20 @@ episodes per seed. The main empirical findings are:
 \noindent
 The practical implication has shifted from the short-budget run: training budget, not a
 fundamental RL-versus-rule-based ceiling, was the dominant factor behind the earlier
-large gap. Well-designed rule-based weekly search still wins the primary reward ranking
-in every scenario and dimension tested and needs no training, so it remains the safe
-default when training resources are limited, but a sufficiently trained RL agent is now a
-credible alternative on profit, and specifically at 30D or 50D it also delivers a real
-risk-side (lower default rate) benefit in most scenarios. The 30D observation space is
-the strongest default for an RL deployment: it is the only dimension at which the
-reference DQN agent's own reward peaks, and it supports the risk-side advantage developed
-above. Future work should investigate whether an even larger training budget closes the
-remaining $-$0.46\%~to~$-$2.52\% profit gap entirely (particularly for the DQN family at
-50D), reward sensitivity to penalty weights, more adaptive recurrent or attention-based
-architectures, whether the ``locally tied, globally better'' pattern generalizes beyond
-the adverse-stress/30D pairing tested here, and validation on real or semi-synthetic loan
-panels.
+large gap. Rule-based policies still win the primary reward ranking in every scenario
+and dimension tested, and the weekly grid search needs no training, so it remains the
+safe default when training resources are limited. A sufficiently trained RL agent comes
+within a few percent of it on profit, but it does not overtake it in any scenario and does not
+offer a lower default rate in exchange, so in this setting RL is a close second rather
+than a better alternative. A compact or intermediate observation (12D--30D) is the
+sensible choice for an RL deployment, since larger states bring no profit gain at this
+budget and can severely degrade value-based agents. Future work should investigate
+whether an even larger training budget closes the remaining $-$0.96\%~to~$-$2.43\% profit
+gap entirely (particularly for the DQN family at 50D), how many seeds are needed to rank
+the leading RL agents reliably, reward sensitivity to penalty weights, more adaptive
+recurrent or attention-based architectures, whether the ``locally tied, globally
+better'' pattern generalizes beyond the adverse-stress/30D pairing tested here, and
+validation on real or semi-synthetic loan panels.
 
 % ===========================================================================
 % REFERENCES  (manual \thebibliography handled by natbib in author-year mode;
@@ -1127,8 +1159,8 @@ panels.
     Siddiqi, N. (2006).
     \textit{Credit risk scorecards: Developing and implementing intelligent credit scoring}. Wiley.
 
-    \bibitem[Thomas(2017)]{thomas2017}
-    Thomas, L.~C. (2017).
+    \bibitem[Thomas et~al.(2017)]{thomas2017}
+    Thomas, L.~C., Crook, J., \& Edelman, D. (2017).
     \textit{Credit scoring and its applications} (2nd ed.).
     Society for Industrial and Applied Mathematics.
     \url{https://doi.org/10.1137/1.9781611974560}

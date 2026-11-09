@@ -20,7 +20,11 @@ paper/*.out
 paper/*.fls
 paper/*.fdb_latexmk
 paper/*.synctex.gz
+paper/*.xdv
+paper/*.spl
+paper/*.toc
 
+# LaTeX build directory (XeTeX output goes here)
 paper/out/
 
 # Local, not part of the article repository
