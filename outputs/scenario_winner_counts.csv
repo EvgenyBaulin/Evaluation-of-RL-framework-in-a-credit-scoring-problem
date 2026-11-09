@@ -1,6 +1,6 @@
 state_dim,metric,rl_scenario_wins,baseline_scenario_wins,total_scenarios
 12,cumulative_reward_mean,0,6,6
-12,expected_profit_mean,2,4,6
+12,expected_profit_mean,0,6,6
 12,default_rate_mean,0,6,6
 20,cumulative_reward_mean,0,6,6
 20,expected_profit_mean,0,6,6
