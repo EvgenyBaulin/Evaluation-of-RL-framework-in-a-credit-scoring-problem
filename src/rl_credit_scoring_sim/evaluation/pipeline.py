@@ -766,6 +766,50 @@ def execute_pipeline(config: dict[str, Any], scenarios: dict[str, Any]) -> dict[
         }
 
     main_summary, main_weekly = _evaluate_main(config, scenarios, trained_agents)
+    return _finalize_pipeline(config, scenarios, paths, training_logs, main_summary, main_weekly)
+
+
+def run_seed_shard(
+    config: dict[str, Any], scenarios: dict[str, Any], seed: int
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Train and evaluate every controller for a single seed.
+
+    Used by the seed-level parallel run. The global random state is reset to
+    ``seed`` at the start of the shard, so each shard is deterministic on its
+    own and does not depend on which seeds ran before it in the same process.
+    """
+    shard_config = deepcopy(config)
+    shard_config["seeds"] = [seed]
+    paths = ensure_directories(shard_config)
+    set_global_seed(seed)
+    trained_agents, training_logs = _train_agents(shard_config, scenarios, paths)
+    main_summary, main_weekly = _evaluate_main(shard_config, scenarios, trained_agents)
+    return training_logs, main_summary, main_weekly
+
+
+def finalize_from_shards(
+    config: dict[str, Any],
+    scenarios: dict[str, Any],
+    shards: list[tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]],
+) -> dict[str, Any]:
+    """Merge per-seed shards (in ``config["seeds"]`` order) and build all outputs."""
+    paths = ensure_directories(config)
+    set_global_seed(config["seeds"][0])
+    _write_reference_summary(paths["reference_summary"])
+    training_logs = pd.concat([shard[0] for shard in shards], ignore_index=True)
+    main_summary = pd.concat([shard[1] for shard in shards], ignore_index=True)
+    main_weekly = pd.concat([shard[2] for shard in shards], ignore_index=True)
+    return _finalize_pipeline(config, scenarios, paths, training_logs, main_summary, main_weekly)
+
+
+def _finalize_pipeline(
+    config: dict[str, Any],
+    scenarios: dict[str, Any],
+    paths: dict[str, Path],
+    training_logs: pd.DataFrame,
+    main_summary: pd.DataFrame,
+    main_weekly: pd.DataFrame,
+) -> dict[str, Any]:
     ablation_summary = pd.DataFrame()
     ablation_weekly = pd.DataFrame()
     if config["execution"]["run_ablation"]:

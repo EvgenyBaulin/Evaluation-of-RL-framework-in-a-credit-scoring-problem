@@ -789,6 +789,8 @@ def run_dimensionality_experiment(
     state_dims: list[int] | None = None,
     device: str = "cpu",
     parallelize: bool = False,
+    parallelize_seeds: bool = False,
+    workers: int | None = None,
 ) -> dict[str, Any]:
     project_root = Path(project_root)
     dims = [int(dim) for dim in (state_dims or list(ALLOWED_STATE_DIMS))]
@@ -811,7 +813,16 @@ def run_dimensionality_experiment(
         config = load_run_config(project_root, profile=profile, overrides=overrides)
         configs_by_dim[state_dim] = config
 
-    if parallelize and len(dims) > 1:
+    if parallelize_seeds:
+        from rl_credit_scoring_sim.utils.parallelization import run_dim_seeds_parallel
+        results, failures = run_dim_seeds_parallel(
+            dims=dims,
+            configs_by_dim=configs_by_dim,
+            shared_scenarios=shared_scenarios,
+            build_artifacts_fn=_build_dimension_specific_artifacts,
+            n_workers=workers,
+        )
+    elif parallelize and len(dims) > 1:
         from rl_credit_scoring_sim.utils.parallelization import run_dims_parallel
         results, failures = run_dims_parallel(
             dims=dims,

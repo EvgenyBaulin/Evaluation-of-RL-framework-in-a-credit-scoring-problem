@@ -53,6 +53,20 @@ if __name__ == "__main__":
              "Recommended when you have ≥4 CPU cores and outputs do not overlap.",
     )
     parser.add_argument(
+        "--parallelize-seeds",
+        action="store_true",
+        help="Train and evaluate every (state dimension, seed) pair in its own "
+             "subprocess, using up to --workers cores. Each seed shard resets the "
+             "global random state to its seed.",
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help="Number of worker processes for --parallelize-seeds "
+             "(default: CPU count minus one).",
+    )
+    parser.add_argument(
         "--benchmark",
         action="store_true",
         help="Run a quick device benchmark before starting the experiment.",
@@ -71,7 +85,8 @@ if __name__ == "__main__":
     logger.info("  profile         : %s", args.profile or "active_profile")
     logger.info("  device          : %s%s", device, " (auto)" if args.device == "auto" else "")
     logger.info("  parallelize     : %s", args.parallelize)
-    logger.info("  cpu workers     : %d", n_cpu_workers())
+    logger.info("  seed shards     : %s", args.parallelize_seeds)
+    logger.info("  cpu workers     : %d", args.workers or n_cpu_workers())
     logger.info("-" * 60)
     logger.info("Experiment plan")
     logger.info(
@@ -101,4 +116,6 @@ if __name__ == "__main__":
         profile=args.profile,
         device=device,
         parallelize=args.parallelize,
+        parallelize_seeds=args.parallelize_seeds,
+        workers=args.workers,
     )
